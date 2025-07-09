@@ -9,7 +9,7 @@
     },
     "paths": {
         "data_folder": "data",
-        "output_folder": "output",
+        "output_folder": "OUT",
         "log_folder": "logs"
     },
     "excel_files": {
@@ -19,5 +19,10 @@
         "payment_ledger": "지불보조장.xlsx",
         "tax_invoice_wis": "매입세금계산서(WIS).xlsx",
         "processing_fee": "임가공비.xlsx"
+    },
+    "output": {
+        "default_folder": "OUT",
+        "file_prefix": "매입대사결과",
+        "timestamp_format": "%Y%m%d_%H%M%S"
     }
 }
