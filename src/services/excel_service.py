@@ -1,139 +1,142 @@
-"""
-Excel 데이터 처리 서비스
-기존 kfunction.py의 기능과 매입대사 프로세스를 통합
-"""
 import pandas as pd
-import numpy as np
-import win32com.client as win32
+from typing import List, Dict, Optional
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
-import gc
 
-from .data_manager import DataManager
-from ..models import Purchase, PurchaseSummary
+from ..models import Supplier, Purchase, Payment, TaxInvoice
+
 
 class ExcelService:
-    def __init__(self):
-        self.data_cache: Dict[str, pd.DataFrame] = {}
-        self.data_manager = DataManager()
-        
-    def read_excel_data(self, 
-                       file_path: str,
-                       sheet: int | str = 0,
-                       header: int | list[int] = 0) -> pd.DataFrame:
-        """
-        Excel 파일을 DataFrame으로 읽어오는 함수 (pywin32 사용)
-        기존 kfunction.py의 read_excel_data 함수 활용
-        """
-        print(f"[INFO] '{file_path}' 읽는 중…")
-        excel, wb = None, None
+    """Excel 파일 처리 서비스"""
+
+    @staticmethod
+    def read_excel_with_validation(file_path: str, sheet_name=0, header=0) -> pd.DataFrame:
+        """Excel 파일 읽기 with 검증"""
         try:
-            excel = win32.Dispatch("Excel.Application")
-            excel.Visible = False
-            excel.DisplayAlerts = False
-            
-            wb = excel.Workbooks.Open(str(Path(file_path).resolve()))
-            
-            # 시트 처리
-            if isinstance(sheet, int):
-                ws = wb.Worksheets(sheet + 1)  # 1-based index
-            else:
-                ws = wb.Worksheets(sheet)
-            
-            # 데이터 범위 가져오기
-            used_range = ws.UsedRange
-            data = used_range.Value
-            
-            # DataFrame 생성
-            if data:
-                df = pd.DataFrame(list(data))
-                if header is not None:
-                    if isinstance(header, int):
-                        df.columns = df.iloc[header]
-                        df = df.iloc[header + 1:].reset_index(drop=True)
-                    else:
-                        # 다중 헤더 처리
-                        headers = [df.iloc[h] for h in header]
-                        df.columns = pd.MultiIndex.from_arrays(headers)
-                        df = df.iloc[max(header) + 1:].reset_index(drop=True)
-                return df
-            else:
-                return pd.DataFrame()
-                
+            df = pd.read_excel(file_path, sheet_name=sheet_name, header=header)
+            return df
         except Exception as e:
-            print(f"[ERROR] Excel 읽기 실패: {e}")
-            raise
-        finally:
-            if wb:
-                wb.Close(False)
-            if excel:
-                excel.Quit()
-            gc.collect()
-    
-    def process_supplier_purchase_data(self, config: dict) -> pd.DataFrame:
-        """
-        협력사 매입 데이터 처리 (매입대사2.ipynb의 로직)
-        이제 DataManager와 모델을 사용
-        """
-        # DataManager 초기화
-        self.data_manager.clear_all()
-        
-        # 1. 기준 데이터 읽기
-        df_standard = self.read_excel_data(
-            f"data/{config['excel_files']['standard']}", 
-            sheet=0
-        )
-        
-        # 2. 협력사단품별매입 데이터 읽기
-        df_purchase = self.read_excel_data(
-            f"data/{config['excel_files']['supplier_purchase']}", 
-            header=0
-        )
-        
-        # Grand Total 행 제거
-        df_purchase = df_purchase.drop(0).reset_index(drop=True)
-        
-        # 3. 필요한 컬럼 선택 및 피벗
-        df_pivot = df_purchase.pivot_table(
-            index=["년월", "협력사코드", "협력사명", "단품코드", "단품명", "면과세구분명"],
-            values="최종매입금액",
-            aggfunc="sum"
-        ).reset_index()
-        
-        # 4. 데이터 타입 변환
-        df_pivot['협력사코드'] = df_pivot['협력사코드'].astype(int).astype(str)
-        df_pivot['단품코드'] = df_pivot['단품코드'].astype(int).astype(str)
-        
-        df_standard_subset = df_standard[['협력사코드', '단품코드']].drop_duplicates()
-        df_standard_subset['협력사코드'] = df_standard_subset['협력사코드'].astype(int).astype(str)
-        df_standard_subset['단품코드'] = df_standard_subset['단품코드'].astype(int).astype(str)
-        
-        # 5. Inner join
-        df_final = pd.merge(
-            df_pivot, 
-            df_standard_subset, 
-            on=['협력사코드', '단품코드'], 
-            how='inner'
-        )
-        
-        # 6. DataManager에 데이터 로드
-        self.data_manager.load_suppliers_from_df(df_final)
-        self.data_manager.load_purchases_from_df(df_final)
-        
-        # 7. 요약 생성 및 DataFrame 변환
-        self.data_manager.create_purchase_summary()
-        df_result = self.data_manager.export_summary_to_df()
-        
-        # 8. 0원 제거
-        df_result = df_result[df_result.최종매입금액 != 0]
-        
-        return df_result
-    
-    def get_data_manager(self) -> DataManager:
-        """DataManager 인스턴스 반환"""
-        return self.data_manager
-    
-    def save_to_excel(self, df: pd.DataFrame, output_path: str):
-        """DataFrame을 Excel로 저장"""
-        df.to_excel(output_path, index=False)
-        print(f"[INFO] 파일 저장 완료: {output_path}")
+            raise Exception(f"Excel 파일 읽기 오류: {str(e)}")
+
+    @staticmethod
+    def load_suppliers(file_path: str) -> List[Supplier]:
+        """공급업체 데이터 로드"""
+        df = ExcelService.read_excel_with_validation(file_path)
+
+        suppliers = []
+        for idx, row in df.iterrows():
+            supplier = Supplier(
+                id=str(row.get('사업자등록번호', idx)),
+                business_number=str(row.get('사업자등록번호', '')),
+                name=row.get('상호명', ''),
+                representative=row.get('대표자', ''),
+                address=row.get('주소', ''),
+                business_type=row.get('업태', ''),
+                business_category=row.get('종목', ''),
+                phone=row.get('전화번호', ''),
+                email=row.get('이메일', '')
+            )
+            suppliers.append(supplier)
+
+        return suppliers
+
+    @staticmethod
+    def load_purchases(file_path: str) -> List[Purchase]:
+        """구매 데이터 로드"""
+        df = ExcelService.read_excel_with_validation(file_path)
+
+        purchases = []
+        for idx, row in df.iterrows():
+            # 날짜 처리
+            purchase_date = pd.to_datetime(row.get('거래일자', datetime.now()), errors='coerce')
+            if pd.isna(purchase_date):
+                purchase_date = datetime.now()
+
+            purchase = Purchase(
+                id=f"PUR_{idx}",
+                supplier_id=str(row.get('사업자등록번호', '')),
+                purchase_date=purchase_date,
+                description=row.get('품목', ''),
+                amount=float(row.get('금액', 0)),
+                tax_amount=float(row.get('부가세', 0)),
+                total_amount=float(row.get('합계', 0)),
+                payment_status=row.get('지급상태', 'pending'),
+                invoice_number=row.get('계산서번호', ''),
+                department=row.get('부서', ''),
+                project_code=row.get('프로젝트코드', '')
+            )
+            purchases.append(purchase)
+
+        return purchases
+
+    @staticmethod
+    def load_payments(file_path: str) -> List[Payment]:
+        """지급 데이터 로드"""
+        df = ExcelService.read_excel_with_validation(file_path)
+
+        payments = []
+        for idx, row in df.iterrows():
+            payment_date = pd.to_datetime(row.get('지급일자', datetime.now()), errors='coerce')
+            if pd.isna(payment_date):
+                payment_date = datetime.now()
+
+            payment = Payment(
+                id=f"PAY_{idx}",
+                supplier_id=str(row.get('사업자등록번호', '')),
+                payment_date=payment_date,
+                amount=float(row.get('지급금액', 0)),
+                payment_method=row.get('지급방법', '계좌이체'),
+                bank_name=row.get('은행명', ''),
+                account_number=row.get('계좌번호', ''),
+                reference_number=row.get('참조번호', ''),
+                description=row.get('적요', '')
+            )
+            payments.append(payment)
+
+        return payments
+
+    @staticmethod
+    def load_tax_invoices(file_path: str) -> List[TaxInvoice]:
+        """세금계산서 데이터 로드"""
+        df = ExcelService.read_excel_with_validation(file_path)
+
+        # MultiIndex 컬럼 처리 (매입대사2.ipynb 참고)
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = [col[0] if pd.isna(col[1]) else f"{col[0]}_{col[1]}" for col in df.columns]
+
+        tax_invoices = []
+        for idx, row in df.iterrows():
+            issue_date = pd.to_datetime(row.get('발행일자', datetime.now()), errors='coerce')
+            if pd.isna(issue_date):
+                issue_date = datetime.now()
+
+            tax_invoice = TaxInvoice(
+                id=f"TAX_{idx}",
+                invoice_number=str(row.get('국세청승인번호', f"TAX_{idx}")),
+                supplier_id=str(row.get('공급자사업자번호', '')),
+                issue_date=issue_date,
+                supply_amount=float(row.get('공급가액', 0)),
+                tax_amount=float(row.get('세액', 0)),
+                total_amount=float(row.get('합계금액', 0)),
+                invoice_type=row.get('계산서종류', '세금계산서'),
+                description=row.get('품목', ''),
+                buyer_business_number=str(row.get('공급받는자사업자번호', '')),
+                electronic_invoice_status=row.get('전자세금계산서여부', 'Y')
+            )
+            tax_invoices.append(tax_invoice)
+
+        return tax_invoices
+
+    @staticmethod
+    def export_to_excel(data: Dict, output_path: str):
+        """데이터를 Excel로 내보내기"""
+        with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
+            for sheet_name, df_data in data.items():
+                if isinstance(df_data, pd.DataFrame):
+                    df_data.to_excel(writer, sheet_name=sheet_name, index=False)
+                elif isinstance(df_data, list):
+                    df = pd.DataFrame(df_data)
+                    df.to_excel(writer, sheet_name=sheet_name, index=False)
+                elif isinstance(df_data, dict):
+                    df = pd.DataFrame([df_data])
+                    df.to_excel(writer, sheet_name=sheet_name, index=False)

@@ -68,16 +68,13 @@
         "id": "79d92403-099e-4620-9cab-26a41134e58c",
         "title": "UI/UX 디자인 시스템 구축",
         "description": "",
-        "status": "completed",
+        "status": "todo",
         "created_at": "2025-07-09T07:11:27.045352+00:00",
-        "updated_at": "2025-07-09T08:45:05.915345+00:00",
+        "updated_at": "2025-07-09T07:11:27.045352+00:00",
         "started_at": null,
-        "completed_at": "2025-07-09T08:45:05.915345+00:00",
+        "completed_at": null,
         "duration": null,
-        "notes": [
-          "UI 개편 완료 - 파일 업로드 방식으로 변경",
-          "[완료] UI 개편 완료! 파일 업로드 방식으로 전환, 날짜 선택 기능 추가, 대사 실행 및 Excel 다운로드 구현"
-        ],
+        "notes": [],
         "outputs": {}
       },
       {
@@ -159,9 +156,9 @@
         "outputs": {}
       }
     ],
-    "current_task_index": 4,
+    "current_task_index": 2,
     "created_at": "2025-07-09T07:11:27.035352+00:00",
-    "updated_at": "2025-07-09T08:45:05.915345+00:00",
+    "updated_at": "2025-07-09T07:34:23.130045+00:00",
     "completed_at": null,
     "archived_at": null,
     "stats": {},
@@ -428,47 +425,9 @@
         "note": "나머지 Excel 처리 및 대사 로직 구현 완료!"
       },
       "metadata": {}
-    },
-    {
-      "id": "32808256-9f1d-47dd-bd53-c0d6a4658149",
-      "type": "note_added",
-      "timestamp": "2025-07-09T08:44:56.293717+00:00",
-      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
-      "task_id": "79d92403-099e-4620-9cab-26a41134e58c",
-      "user": "system",
-      "details": {
-        "note": "UI 개편 완료 - 파일 업로드 방식으로 변경"
-      },
-      "metadata": {}
-    },
-    {
-      "id": "32808256-9f1d-47dd-bd53-c0d6a4658149",
-      "type": "note_added",
-      "timestamp": "2025-07-09T08:44:56.293717+00:00",
-      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
-      "task_id": "79d92403-099e-4620-9cab-26a41134e58c",
-      "user": "system",
-      "details": {
-        "note": "UI 개편 완료 - 파일 업로드 방식으로 변경"
-      },
-      "metadata": {}
-    },
-    {
-      "id": "da85dd83-d667-4596-9d61-452e4a6d393c",
-      "type": "task_completed",
-      "timestamp": "2025-07-09T08:45:05.915345+00:00",
-      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
-      "task_id": "79d92403-099e-4620-9cab-26a41134e58c",
-      "user": "system",
-      "details": {
-        "title": "UI/UX 디자인 시스템 구축",
-        "duration": null,
-        "note": "UI 개편 완료! 파일 업로드 방식으로 전환, 날짜 선택 기능 추가, 대사 실행 및 Excel 다운로드 구현"
-      },
-      "metadata": {}
     }
   ],
   "version": "3.0.0",
-  "last_saved": "2025-07-09T08:45:05.915345+00:00",
+  "last_saved": "2025-07-09T07:34:23.130045+00:00",
   "metadata": {}
 }
