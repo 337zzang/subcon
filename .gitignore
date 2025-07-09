@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+*.log
+.DS_Store
+Thumbs.db
+memory/context.json.backup*
+memory/workflow.json.backup*
+
+# Excel files
+*.xlsx
+*.xls
+*.xlsm
+*.csv

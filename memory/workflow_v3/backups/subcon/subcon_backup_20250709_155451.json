@@ -1,0 +1,47 @@
+{
+  "current_plan": {
+    "id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+    "name": "subcon 신규 프로젝트 개발",
+    "description": "",
+    "status": "active",
+    "tasks": [],
+    "current_task_index": 0,
+    "created_at": "2025-07-09T06:46:12.857177+00:00",
+    "updated_at": "2025-07-09T06:46:12.857177+00:00",
+    "completed_at": null,
+    "archived_at": null,
+    "stats": {},
+    "metadata": {}
+  },
+  "events": [
+    {
+      "id": "36afc71a-8e74-4562-94ea-1ca7bac5a858",
+      "type": "plan_created",
+      "timestamp": "2025-07-09T06:46:12.857177+00:00",
+      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+      "task_id": null,
+      "user": "system",
+      "details": {
+        "name": "subcon 신규 프로젝트 개발",
+        "description": ""
+      },
+      "metadata": {}
+    },
+    {
+      "id": "0b1ff969-5e56-4d73-a7b0-330ba7f375e1",
+      "type": "plan_started",
+      "timestamp": "2025-07-09T06:46:12.857177+00:00",
+      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+      "task_id": null,
+      "user": "system",
+      "details": {
+        "name": "subcon 신규 프로젝트 개발",
+        "task_count": 0
+      },
+      "metadata": {}
+    }
+  ],
+  "version": "3.0.0",
+  "last_saved": "2025-07-09T06:46:12.857177+00:00",
+  "metadata": {}
+}
