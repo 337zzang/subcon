@@ -1,7 +1,7 @@
 """
 데이터 관리자 - 모든 데이터 모델을 통합 관리
 """
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Any
 from decimal import Decimal
 import pandas as pd
 from collections import defaultdict
