@@ -498,3 +498,101 @@ class ReconciliationService:
                 print(f"✅ 미대사 항목 저장 완료: {unmatched_file}")
 
         return str(main_file)
+
+
+    def _process_payment_ledger(self, config: dict, df_final_result: pd.DataFrame) -> pd.DataFrame:
+        """지불보조장 처리"""
+        file_path = f"data/{config['excel_files']['payment_ledger']}"
+        
+        # 데이터 읽기
+        df_book = self.excel_service.read_excel_data(file_path)
+        
+        # 거래처번호를 문자열로 변환하는 함수
+        def convert_vendor_to_string(val):
+            if pd.isna(val):
+                return ''
+            elif isinstance(val, (int, float)):
+                # 숫자인 경우 정수로 변환 후 문자열로 (소수점 제거)
+                return str(int(val))
+            else:
+                return str(val)
+        
+        df_book['거래처번호'] = df_book['거래처번호'].apply(convert_vendor_to_string)
+        
+        # df_final_result에 있는 업체사업자번호 리스트를 이용하여 필터링
+        if '업체사업자번호' in df_final_result.columns:
+            filtered_df_book = df_book[df_book['거래처번호'].isin(df_final_result['업체사업자번호'])]
+        else:
+            # 업체사업자번호가 없으면 빈 DataFrame 반환
+            return pd.DataFrame()
+        
+        # 필요한 컬럼만 선택
+        if all(col in filtered_df_book.columns for col in ["계정코드", "계정과목명", "회계일", "전표번호", 
+                                                           "거래처번호", "거래처명", "차변금액", "대변금액"]):
+            filtered_df_book = filtered_df_book[["계정코드", "계정과목명", "회계일", "전표번호", 
+                                                 "거래처번호", "거래처명", "차변금액", "대변금액"]]
+        else:
+            print("[WARNING] 지불보조장에 필요한 컬럼이 없습니다.")
+            return pd.DataFrame()
+        
+        # 차변금액과 대변금액을 float 타입으로 변환
+        if '차변금액' in filtered_df_book.columns:
+            filtered_df_book["차변금액"] = pd.to_numeric(
+                filtered_df_book["차변금액"].astype(str).str.replace(",", "", regex=True), 
+                errors='coerce'
+            )
+        if '대변금액' in filtered_df_book.columns:
+            filtered_df_book["대변금액"] = pd.to_numeric(
+                filtered_df_book["대변금액"].astype(str).str.replace(",", "", regex=True), 
+                errors='coerce'
+            )
+        
+        # 차변금액이 0이 아닌 것만 필터링
+        if '차변금액' in filtered_df_book.columns:
+            filtered_df_book = filtered_df_book[filtered_df_book['차변금액'] != 0]
+        
+        return filtered_df_book
+    
+    def _merge_payment_info(self, df_final_result: pd.DataFrame, 
+                           df_payment_ledger: pd.DataFrame) -> pd.DataFrame:
+        """지불정보 병합"""
+        # df_final_result 복사
+        df_final_with_payment = df_final_result.copy()
+        
+        # 지불예상금액 계산
+        if '국세청공급가액' in df_final_with_payment.columns and '국세청세액' in df_final_with_payment.columns:
+            df_final_with_payment["지불예상금액"] = (
+                pd.to_numeric(df_final_with_payment["국세청공급가액"], errors='coerce').fillna(0) + 
+                pd.to_numeric(df_final_with_payment["국세청세액"], errors='coerce').fillna(0)
+            )
+        else:
+            df_final_with_payment["지불예상금액"] = 0
+        
+        # 지불정보 초기화
+        df_final_with_payment["구분키2"] = None
+        df_final_with_payment["차변금액"] = None
+        df_final_with_payment["전표번호"] = None
+        df_final_with_payment["회계일"] = None
+        df_final_with_payment["비고"] = ""
+        
+        if df_payment_ledger.empty:
+            return df_final_with_payment
+        
+        # 업체사업자번호별로 지불 정보 매핑
+        for idx, row in df_final_with_payment.iterrows():
+            if pd.notna(row.get('업체사업자번호')):
+                vendor_num = str(row['업체사업자번호'])
+                
+                # 해당 업체의 지불 정보 찾기
+                payment_rows = df_payment_ledger[df_payment_ledger['거래처번호'] == vendor_num]
+                
+                if not payment_rows.empty:
+                    # 여러 건이 있으면 첫 번째 것 사용 (또는 날짜 기준 정렬 후 사용)
+                    payment_info = payment_rows.iloc[0]
+                    
+                    df_final_with_payment.at[idx, '구분키2'] = "매입금액대사"
+                    df_final_with_payment.at[idx, '차변금액'] = payment_info.get('차변금액', 0)
+                    df_final_with_payment.at[idx, '전표번호'] = payment_info.get('전표번호', '')
+                    df_final_with_payment.at[idx, '회계일'] = payment_info.get('회계일', '')
+        
+        return df_final_with_payment
