@@ -16,6 +16,7 @@ import json
 from pathlib import Path
 
 from src.services.excel_service import ExcelService
+from src.ui.widgets.analysis_widget import AnalysisWidget
 
 class DataProcessThread(QThread):
     """데이터 처리를 위한 별도 스레드"""
@@ -115,9 +116,14 @@ class MainWindow(QMainWindow):
         self.log_text = QTextEdit()
         self.log_text.setReadOnly(True)
         log_layout.addWidget(self.log_text)
+        
+        # 분석 탭
+        self.analysis_widget = AnalysisWidget()
+        self.analysis_widget.refresh_requested.connect(self.process_data)
 
         # 탭 추가
         self.tab_widget.addTab(self.data_tab, "데이터")
+        self.tab_widget.addTab(self.analysis_widget, "분석")
         self.tab_widget.addTab(self.log_tab, "로그")
 
         main_layout.addWidget(self.tab_widget)
@@ -193,6 +199,13 @@ class MainWindow(QMainWindow):
         self.btn_export.setEnabled(True)
         self.progress_bar.setVisible(False)
         self.log(f"처리 완료! 총 {len(df)}개 행")
+        
+        # 분석 위젯에 DataManager 연결
+        data_manager = self.excel_service.get_data_manager()
+        self.analysis_widget.set_data_manager(data_manager)
+        
+        # 분석 탭으로 이동
+        self.tab_widget.setCurrentIndex(1)
 
     def on_process_error(self, error_msg: str):
         """처리 오류"""

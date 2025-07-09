@@ -24,13 +24,16 @@
         "id": "3ca803f7-065b-48a9-809c-cd1edfcf0ebb",
         "title": "React 컴포넌트 구조 설계",
         "description": "",
-        "status": "todo",
+        "status": "completed",
         "created_at": "2025-07-09T07:11:27.039353+00:00",
-        "updated_at": "2025-07-09T07:11:27.039353+00:00",
+        "updated_at": "2025-07-09T07:26:26.167198+00:00",
         "started_at": null,
-        "completed_at": null,
+        "completed_at": "2025-07-09T07:26:26.167198+00:00",
         "duration": null,
-        "notes": [],
+        "notes": [
+          "PyQt6 프로젝트로 변경 - 데이터 모델 구현",
+          "[완료] 데이터 모델 구현 완료! 총 7개 모델과 DataManager 구현"
+        ],
         "outputs": {}
       },
       {
@@ -151,9 +154,9 @@
         "outputs": {}
       }
     ],
-    "current_task_index": 0,
+    "current_task_index": 1,
     "created_at": "2025-07-09T07:11:27.035352+00:00",
-    "updated_at": "2025-07-09T07:17:56.363099+00:00",
+    "updated_at": "2025-07-09T07:26:26.167198+00:00",
     "completed_at": null,
     "archived_at": null,
     "stats": {},
@@ -368,9 +371,47 @@
         "note": "프로젝트 구조 개선 완료! PyQt6 기반 데스크톱 앱 구조 생성"
       },
       "metadata": {}
+    },
+    {
+      "id": "5aee81a0-898f-4cc0-b3ef-d6d63c22c043",
+      "type": "note_added",
+      "timestamp": "2025-07-09T07:19:36.520090+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "3ca803f7-065b-48a9-809c-cd1edfcf0ebb",
+      "user": "system",
+      "details": {
+        "note": "PyQt6 프로젝트로 변경 - 데이터 모델 구현"
+      },
+      "metadata": {}
+    },
+    {
+      "id": "5aee81a0-898f-4cc0-b3ef-d6d63c22c043",
+      "type": "note_added",
+      "timestamp": "2025-07-09T07:19:36.520090+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "3ca803f7-065b-48a9-809c-cd1edfcf0ebb",
+      "user": "system",
+      "details": {
+        "note": "PyQt6 프로젝트로 변경 - 데이터 모델 구현"
+      },
+      "metadata": {}
+    },
+    {
+      "id": "9633e88c-cce7-4b2b-bfef-f79b996dfdb9",
+      "type": "task_completed",
+      "timestamp": "2025-07-09T07:26:26.167198+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "3ca803f7-065b-48a9-809c-cd1edfcf0ebb",
+      "user": "system",
+      "details": {
+        "title": "React 컴포넌트 구조 설계",
+        "duration": null,
+        "note": "데이터 모델 구현 완료! 총 7개 모델과 DataManager 구현"
+      },
+      "metadata": {}
     }
   ],
   "version": "3.0.0",
-  "last_saved": "2025-07-09T07:17:56.363099+00:00",
+  "last_saved": "2025-07-09T07:26:26.167198+00:00",
   "metadata": {}
 }
