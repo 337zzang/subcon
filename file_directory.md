@@ -1,59 +1,133 @@
-# subcon 프로젝트 디렉토리 구조
+# File Directory
 
-```
-subcon/
-├── data/                         # 입력 데이터 파일
-│   ├── 기준(최종작업용).xlsx
-│   ├── 매입세금계산서(WIS).xlsx
-│   ├── 매입세금계산서.xlsx
-│   ├── 지불보조장.xlsx
-│   └── 협력사단품별매입(최종작업용).xlsx
-├── docs/                         # 프로젝트 문서
-│   ├── api_design.md            # API 설계 문서
-│   ├── implementation_plan.md    # 구현 계획
-│   ├── overview.md              # 프로젝트 개요
-│   ├── requirements.md          # 요구사항 분석
-│   └── system_design.md         # 시스템 설계
-├── memory/                       # 프로젝트 메모리
-│   └── context.json             # 프로젝트 컨텍스트
-├── src/                          # 소스 코드 (예정)
-│   └── __init__.py
-├── test/                         # 테스트 코드 (예정)
-│   ├── __init__.py
-│   └── test_smoke.py
-├── .gitignore                    # Git 제외 파일
-├── file_directory.md             # 이 파일
-├── kfunction.py                  # 기존 함수 모듈
-├── PROJECT_CONTEXT.md            # 프로젝트 컨텍스트
-├── README.md                     # 프로젝트 설명
-└── 매입대사2.ipynb              # 원본 노트북 코드
-```
+Generated: 2025-07-09 16:09:11
 
-## 📄 주요 파일 설명
+## Files
+- .git\COMMIT_EDITMSG
+- .git\HEAD
+- .git\config
+- .git\description
+- .git\hooks\applypatch-msg.sample
+- .git\hooks\commit-msg.sample
+- .git\hooks\fsmonitor-watchman.sample
+- .git\hooks\post-update.sample
+- .git\hooks\pre-applypatch.sample
+- .git\hooks\pre-commit.sample
+- .git\hooks\pre-merge-commit.sample
+- .git\hooks\pre-push.sample
+- .git\hooks\pre-rebase.sample
+- .git\hooks\pre-receive.sample
+- .git\hooks\prepare-commit-msg.sample
+- .git\hooks\push-to-checkout.sample
+- .git\hooks\sendemail-validate.sample
+- .git\hooks\update.sample
+- .git\index
+- .git\info\exclude
+- .git\logs\HEAD
+- .git\objects\02\9fc6893a11bf4e7186401adc0ee51c420ee677
+- .git\objects\09\221645f0b587ede0bcfb08e39b6dcbe574e562
+- .git\objects\13\7a9f5b6cdfb3255a9d7b7f4d6be7b9e1b96904
+- .git\objects\1c\c8c1c206ee654a53f722b053153346fb24bcb7
+- .git\objects\21\325641fe212909f7cc3b051bd023a7049717ea
+- .git\objects\33\4fc0446c6ec66de895d14d7d2edc4201852fb4
+- .git\objects\34\23dfcd44274c02fee007080c901bba8e2030ef
+- .git\objects\38\532e419f581a5563a4dadedd9448459a6c1c16
+- .git\objects\43\ecc9a71d1ee358ee1b8e01a45318221bd958f3
+- .git\objects\62\4e572ee34f856f2bdc4c0d55ccde6af614953b
+- .git\objects\69\757a8b961a9c827c9bffbafc3a0a6839aaff85
+- .git\objects\6e\9317991a0cfeca73326463cce512f8af7ebaf2
+- .git\objects\78\2ba9c3dec21804b06aec453b826c262e2b0e72
+- .git\objects\8c\779d5078a1964e576b9c7d5d56edcb77ff5594
+- .git\objects\90\7978ea90a2a33165d9dff1d05854f8dc6e14ab
+- .git\objects\91\6216ab4032977a0d7bd41d1bd9e757147cb67f
+- .git\objects\96\ff1558020c6a1c656b733e1c2e623427946c2b
+- .git\objects\a8\fb67550060d14319988442780ea53f9b69c5db
+- .git\objects\af\2de4e4f77dd774afc0a9a8d235250d7fb1175e
+- .git\objects\bc\f169f411d413551ceb57e5b6fc6b280fdc9d0c
+- .git\objects\c3\21f76e77684c795270639fa6c64a63469e5658
+- .git\objects\cc\0bb7e6e4cd2e2bc537b19409f1d6e2e6f7405b
+- .git\objects\d7\6be622dbcd4b7fedd53b906af459384f9d941b
+- .git\objects\da\38e70271c4d5aac11bc948dbc1477e9e860f2e
+- .git\objects\e3\7a263175e24bf51642c538761c70a9e0285550
+- .git\objects\e6\9de29bb2d1d6434b8b29ae775ad8c2e48c5391
+- .git\objects\e7\d44bb53397e29920523eeed1968a20b414d02f
+- .git\objects\e8\1e3e14aa03e097a4910e0f8b2d3f8f197fd766
+- .git\objects\ef\394073d48609f77f4773d0eb2d29c15f9fc8c9
+- .git\objects\f2\a502cce006cced323b324a28796fa7e1942851
+- .git\objects\fb\5d704bd20beaedd35004163750f48b43ea969c
+- .git\objects\fd\55940196e437595dd995dd365884dfe965eb59
+- .git\refs\heads\master
+- .gitignore
+- PROJECT_CONTEXT.md
+- README.md
+- data\기준(최종작업용).xlsx
+- data\매입세금계산서(WIS).xlsx
+- data\매입세금계산서.xlsx
+- data\지불보조장.xlsx
+- data\협력사단품별매입(최종작업용).xlsx
+- docs\api_design.md
+- docs\implementation_plan.md
+- docs\overview.md
+- docs\requirements.md
+- docs\system_design.md
+- file_directory.md
+- kfunction.py
+- memory\context.json
+- memory\workflow_v3\subcon_workflow.json
+- src\__init__.py
+- test\__init__.py
+- test\test_smoke.py
+- 매입대사2.ipynb
 
-### 루트 디렉토리 파일
-- **매입대사2.ipynb**: 원본 Jupyter 노트북 코드. 매입대사 로직의 프로토타입
-- **kfunction.py**: Excel 파일 읽기를 위한 헬퍼 함수 모듈
-- **README.md**: 프로젝트 전체 개요 및 사용법
-- **PROJECT_CONTEXT.md**: 프로젝트 상태 및 진행 상황
-
-### data/ 디렉토리
-- **협력사단품별매입(최종작업용).xlsx**: 협력사별 매입 내역 원본 데이터
-- **기준(최종작업용).xlsx**: 대사 대상 협력사/단품 마스터 데이터
-- **매입세금계산서(WIS).xlsx**: WIS 시스템의 세금계산서 데이터
-- **매입세금계산서.xlsx**: 국세청 세금계산서 상세 데이터
-- **지불보조장.xlsx**: 실제 지불 내역 데이터
-
-### docs/ 디렉토리
-- **system_design.md**: 시스템 아키텍처 및 데이터 흐름 설계
-- **requirements.md**: 비즈니스 및 기술 요구사항 분석
-- **implementation_plan.md**: 단계별 구현 계획 및 코드 구조
-- **api_design.md**: 모듈 간 인터페이스 및 API 설계
-- **overview.md**: 프로젝트 초기 개요 문서
-
-### 개발 예정 디렉토리
-- **src/**: Python 패키지 형태로 구조화된 소스 코드
-- **test/**: pytest 기반 테스트 코드
-- **config/**: YAML 형식의 설정 파일
-- **output/**: 대사 결과 Excel 파일 출력
-- **logs/**: 실행 로그 파일
+## Directories
+- .git/
+- .git\hooks/
+- .git\info/
+- .git\logs/
+- .git\logs\refs/
+- .git\logs\refs\heads/
+- .git\objects/
+- .git\objects\02/
+- .git\objects\09/
+- .git\objects\13/
+- .git\objects\1c/
+- .git\objects\21/
+- .git\objects\33/
+- .git\objects\34/
+- .git\objects\38/
+- .git\objects\43/
+- .git\objects\62/
+- .git\objects\69/
+- .git\objects\6e/
+- .git\objects\78/
+- .git\objects\8c/
+- .git\objects\90/
+- .git\objects\91/
+- .git\objects\96/
+- .git\objects\a8/
+- .git\objects\af/
+- .git\objects\bc/
+- .git\objects\c3/
+- .git\objects\cc/
+- .git\objects\d7/
+- .git\objects\da/
+- .git\objects\e3/
+- .git\objects\e6/
+- .git\objects\e7/
+- .git\objects\e8/
+- .git\objects\ef/
+- .git\objects\f2/
+- .git\objects\fb/
+- .git\objects\fd/
+- .git\objects\info/
+- .git\objects\pack/
+- .git\refs/
+- .git\refs\heads/
+- .git\refs\tags/
+- data/
+- docs/
+- memory/
+- memory\workflow_v3/
+- memory\workflow_v3\backups/
+- memory\workflow_v3\backups\subcon/
+... and 2 more directories

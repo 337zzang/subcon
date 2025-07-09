@@ -26,3 +26,37 @@ memory/workflow.json.backup*
 *.xls
 *.xlsm
 *.csv
+
+# PyQt6
+*.ui
+*.qrc
+*_rc.py
+ui_*.py
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# PyInstaller
+*.spec
+build/
+dist/
+*.exe
+*.dll
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+*.log
+temp/
+cache/

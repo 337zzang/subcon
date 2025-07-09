@@ -1,0 +1,308 @@
+{
+  "current_plan": {
+    "id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+    "name": "subcon 신규 프로젝트 개발",
+    "description": "",
+    "status": "active",
+    "tasks": [
+      {
+        "id": "bdb6784b-b7e0-43a0-be86-43b38fed06ca",
+        "title": "프로젝트 구조 개선 및 모듈화",
+        "description": "",
+        "status": "todo",
+        "created_at": "2025-07-09T06:54:51.529165+00:00",
+        "updated_at": "2025-07-09T06:54:51.529165+00:00",
+        "started_at": null,
+        "completed_at": null,
+        "duration": null,
+        "notes": [],
+        "outputs": {}
+      },
+      {
+        "id": "9017ec89-11c4-435d-a266-09dd8558d7f3",
+        "title": "데이터 로더 모듈 개발",
+        "description": "",
+        "status": "todo",
+        "created_at": "2025-07-09T06:54:51.535163+00:00",
+        "updated_at": "2025-07-09T06:54:51.535163+00:00",
+        "started_at": null,
+        "completed_at": null,
+        "duration": null,
+        "notes": [],
+        "outputs": {}
+      },
+      {
+        "id": "092c2a49-8140-4c0b-8deb-1bc16a2a7e30",
+        "title": "매입 데이터 처리 모듈",
+        "description": "",
+        "status": "todo",
+        "created_at": "2025-07-09T06:54:51.537162+00:00",
+        "updated_at": "2025-07-09T06:54:51.537162+00:00",
+        "started_at": null,
+        "completed_at": null,
+        "duration": null,
+        "notes": [],
+        "outputs": {}
+      },
+      {
+        "id": "51eb0fa9-2084-4d99-8ca0-1997f28f2292",
+        "title": "세금계산서 매칭 엔진",
+        "description": "",
+        "status": "todo",
+        "created_at": "2025-07-09T06:54:51.539161+00:00",
+        "updated_at": "2025-07-09T06:54:51.539161+00:00",
+        "started_at": null,
+        "completed_at": null,
+        "duration": null,
+        "notes": [],
+        "outputs": {}
+      },
+      {
+        "id": "259835e7-08c0-4e29-85bf-42d0594e2ac3",
+        "title": "지불보조장 대사 모듈",
+        "description": "",
+        "status": "todo",
+        "created_at": "2025-07-09T06:54:51.540162+00:00",
+        "updated_at": "2025-07-09T06:54:51.540162+00:00",
+        "started_at": null,
+        "completed_at": null,
+        "duration": null,
+        "notes": [],
+        "outputs": {}
+      },
+      {
+        "id": "a9415216-fde7-4bd6-ad66-995d659a5b1c",
+        "title": "리포트 생성 모듈",
+        "description": "",
+        "status": "todo",
+        "created_at": "2025-07-09T06:54:51.543162+00:00",
+        "updated_at": "2025-07-09T06:54:51.543162+00:00",
+        "started_at": null,
+        "completed_at": null,
+        "duration": null,
+        "notes": [],
+        "outputs": {}
+      },
+      {
+        "id": "c472087f-ca1b-452f-aab5-abbae129c529",
+        "title": "에러 처리 및 로깅",
+        "description": "",
+        "status": "todo",
+        "created_at": "2025-07-09T06:54:51.545161+00:00",
+        "updated_at": "2025-07-09T06:54:51.545161+00:00",
+        "started_at": null,
+        "completed_at": null,
+        "duration": null,
+        "notes": [],
+        "outputs": {}
+      },
+      {
+        "id": "49bf8d66-980c-44db-a533-30dac290ec08",
+        "title": "설정 파일 관리",
+        "description": "",
+        "status": "todo",
+        "created_at": "2025-07-09T06:54:51.547161+00:00",
+        "updated_at": "2025-07-09T06:54:51.547161+00:00",
+        "started_at": null,
+        "completed_at": null,
+        "duration": null,
+        "notes": [],
+        "outputs": {}
+      },
+      {
+        "id": "b28328b3-453b-463a-85b2-f26a83ddf3a1",
+        "title": "테스트 코드 작성",
+        "description": "",
+        "status": "todo",
+        "created_at": "2025-07-09T06:54:51.549162+00:00",
+        "updated_at": "2025-07-09T06:54:51.549162+00:00",
+        "started_at": null,
+        "completed_at": null,
+        "duration": null,
+        "notes": [],
+        "outputs": {}
+      },
+      {
+        "id": "8fbbe0b8-f0e2-4dd2-b695-a2de8a1287f8",
+        "title": "CLI 인터페이스",
+        "description": "",
+        "status": "todo",
+        "created_at": "2025-07-09T06:54:51.551163+00:00",
+        "updated_at": "2025-07-09T06:54:51.551163+00:00",
+        "started_at": null,
+        "completed_at": null,
+        "duration": null,
+        "notes": [],
+        "outputs": {}
+      },
+      {
+        "id": "cd6952cc-d2e7-46d3-9189-cda6f6a39105",
+        "title": "문서화",
+        "description": "",
+        "status": "todo",
+        "created_at": "2025-07-09T06:54:51.553162+00:00",
+        "updated_at": "2025-07-09T06:54:51.553162+00:00",
+        "started_at": null,
+        "completed_at": null,
+        "duration": null,
+        "notes": [],
+        "outputs": {}
+      }
+    ],
+    "current_task_index": 0,
+    "created_at": "2025-07-09T06:46:12.857177+00:00",
+    "updated_at": "2025-07-09T06:54:51.553162+00:00",
+    "completed_at": null,
+    "archived_at": null,
+    "stats": {},
+    "metadata": {}
+  },
+  "events": [
+    {
+      "id": "25a6251f-0ee1-4ed1-a270-7d91d8ffbb55",
+      "type": "task_added",
+      "timestamp": "2025-07-09T06:54:51.529165+00:00",
+      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+      "task_id": "bdb6784b-b7e0-43a0-be86-43b38fed06ca",
+      "user": "system",
+      "details": {
+        "title": "프로젝트 구조 개선 및 모듈화",
+        "description": ""
+      },
+      "metadata": {}
+    },
+    {
+      "id": "a5e3c9fb-627c-4452-9a61-9248068413b2",
+      "type": "task_added",
+      "timestamp": "2025-07-09T06:54:51.535163+00:00",
+      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+      "task_id": "9017ec89-11c4-435d-a266-09dd8558d7f3",
+      "user": "system",
+      "details": {
+        "title": "데이터 로더 모듈 개발",
+        "description": ""
+      },
+      "metadata": {}
+    },
+    {
+      "id": "e2cc372d-ea8c-4c38-91a8-bbaced4b5fd1",
+      "type": "task_added",
+      "timestamp": "2025-07-09T06:54:51.537162+00:00",
+      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+      "task_id": "092c2a49-8140-4c0b-8deb-1bc16a2a7e30",
+      "user": "system",
+      "details": {
+        "title": "매입 데이터 처리 모듈",
+        "description": ""
+      },
+      "metadata": {}
+    },
+    {
+      "id": "dd9df1a6-b552-48e2-a887-7aea57b0a048",
+      "type": "task_added",
+      "timestamp": "2025-07-09T06:54:51.539161+00:00",
+      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+      "task_id": "51eb0fa9-2084-4d99-8ca0-1997f28f2292",
+      "user": "system",
+      "details": {
+        "title": "세금계산서 매칭 엔진",
+        "description": ""
+      },
+      "metadata": {}
+    },
+    {
+      "id": "95ffd5fa-ecc0-4d26-85f5-1c82fbf76ee5",
+      "type": "task_added",
+      "timestamp": "2025-07-09T06:54:51.541162+00:00",
+      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+      "task_id": "259835e7-08c0-4e29-85bf-42d0594e2ac3",
+      "user": "system",
+      "details": {
+        "title": "지불보조장 대사 모듈",
+        "description": ""
+      },
+      "metadata": {}
+    },
+    {
+      "id": "ca0bb000-6e45-47c7-b004-ef6338f2094a",
+      "type": "task_added",
+      "timestamp": "2025-07-09T06:54:51.543162+00:00",
+      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+      "task_id": "a9415216-fde7-4bd6-ad66-995d659a5b1c",
+      "user": "system",
+      "details": {
+        "title": "리포트 생성 모듈",
+        "description": ""
+      },
+      "metadata": {}
+    },
+    {
+      "id": "56b512f5-9878-4839-afdd-0e48a8fe3692",
+      "type": "task_added",
+      "timestamp": "2025-07-09T06:54:51.545161+00:00",
+      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+      "task_id": "c472087f-ca1b-452f-aab5-abbae129c529",
+      "user": "system",
+      "details": {
+        "title": "에러 처리 및 로깅",
+        "description": ""
+      },
+      "metadata": {}
+    },
+    {
+      "id": "d9654ff8-7edb-440d-871b-61c4ec79fab7",
+      "type": "task_added",
+      "timestamp": "2025-07-09T06:54:51.547161+00:00",
+      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+      "task_id": "49bf8d66-980c-44db-a533-30dac290ec08",
+      "user": "system",
+      "details": {
+        "title": "설정 파일 관리",
+        "description": ""
+      },
+      "metadata": {}
+    },
+    {
+      "id": "c4c99949-a38d-4d31-898f-8a979e548a5b",
+      "type": "task_added",
+      "timestamp": "2025-07-09T06:54:51.549162+00:00",
+      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+      "task_id": "b28328b3-453b-463a-85b2-f26a83ddf3a1",
+      "user": "system",
+      "details": {
+        "title": "테스트 코드 작성",
+        "description": ""
+      },
+      "metadata": {}
+    },
+    {
+      "id": "8fcee96a-9ec9-43d8-8c76-54887869ec6d",
+      "type": "task_added",
+      "timestamp": "2025-07-09T06:54:51.551163+00:00",
+      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+      "task_id": "8fbbe0b8-f0e2-4dd2-b695-a2de8a1287f8",
+      "user": "system",
+      "details": {
+        "title": "CLI 인터페이스",
+        "description": ""
+      },
+      "metadata": {}
+    },
+    {
+      "id": "0001dcc3-4ccf-4ee8-9d6b-4141b490754a",
+      "type": "task_added",
+      "timestamp": "2025-07-09T06:54:51.553162+00:00",
+      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+      "task_id": "cd6952cc-d2e7-46d3-9189-cda6f6a39105",
+      "user": "system",
+      "details": {
+        "title": "문서화",
+        "description": ""
+      },
+      "metadata": {}
+    }
+  ],
+  "version": "3.0.0",
+  "last_saved": "2025-07-09T07:00:18.393852+00:00",
+  "metadata": {}
+}

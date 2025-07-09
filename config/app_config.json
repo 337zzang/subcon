@@ -1,0 +1,23 @@
+{
+    "app_name": "협력사 매입대사 시스템",
+    "version": "1.0.0",
+    "window": {
+        "width": 1200,
+        "height": 800,
+        "min_width": 800,
+        "min_height": 600
+    },
+    "paths": {
+        "data_folder": "data",
+        "output_folder": "output",
+        "log_folder": "logs"
+    },
+    "excel_files": {
+        "supplier_purchase": "협력사단품별매입(최종작업용).xlsx",
+        "standard": "기준(최종작업용).xlsx",
+        "tax_invoice": "매입세금계산서.xlsx",
+        "payment_ledger": "지불보조장.xlsx",
+        "tax_invoice_wis": "매입세금계산서(WIS).xlsx",
+        "processing_fee": "임가공비.xlsx"
+    }
+}

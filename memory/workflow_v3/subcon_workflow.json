@@ -1,30 +1,32 @@
 {
   "current_plan": {
-    "id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+    "id": "876a4841-252e-4a95-b619-6092d13f0af7",
     "name": "subcon 신규 프로젝트 개발",
     "description": "",
     "status": "active",
     "tasks": [
       {
-        "id": "bdb6784b-b7e0-43a0-be86-43b38fed06ca",
+        "id": "cbade10c-2488-4328-ad90-34234fa2ad0b",
         "title": "프로젝트 구조 개선 및 모듈화",
         "description": "",
-        "status": "todo",
-        "created_at": "2025-07-09T06:54:51.529165+00:00",
-        "updated_at": "2025-07-09T06:54:51.529165+00:00",
+        "status": "completed",
+        "created_at": "2025-07-09T07:11:27.037357+00:00",
+        "updated_at": "2025-07-09T07:17:56.363099+00:00",
         "started_at": null,
-        "completed_at": null,
+        "completed_at": "2025-07-09T07:17:56.363099+00:00",
         "duration": null,
-        "notes": [],
+        "notes": [
+          "[완료] 프로젝트 구조 개선 완료! PyQt6 기반 데스크톱 앱 구조 생성"
+        ],
         "outputs": {}
       },
       {
-        "id": "9017ec89-11c4-435d-a266-09dd8558d7f3",
-        "title": "데이터 로더 모듈 개발",
+        "id": "3ca803f7-065b-48a9-809c-cd1edfcf0ebb",
+        "title": "React 컴포넌트 구조 설계",
         "description": "",
         "status": "todo",
-        "created_at": "2025-07-09T06:54:51.535163+00:00",
-        "updated_at": "2025-07-09T06:54:51.535163+00:00",
+        "created_at": "2025-07-09T07:11:27.039353+00:00",
+        "updated_at": "2025-07-09T07:11:27.039353+00:00",
         "started_at": null,
         "completed_at": null,
         "duration": null,
@@ -32,12 +34,12 @@
         "outputs": {}
       },
       {
-        "id": "092c2a49-8140-4c0b-8deb-1bc16a2a7e30",
-        "title": "매입 데이터 처리 모듈",
+        "id": "ffb74659-621b-4633-840f-fd24404dc649",
+        "title": "상태 관리 시스템 구현",
         "description": "",
         "status": "todo",
-        "created_at": "2025-07-09T06:54:51.537162+00:00",
-        "updated_at": "2025-07-09T06:54:51.537162+00:00",
+        "created_at": "2025-07-09T07:11:27.041355+00:00",
+        "updated_at": "2025-07-09T07:11:27.041355+00:00",
         "started_at": null,
         "completed_at": null,
         "duration": null,
@@ -45,12 +47,12 @@
         "outputs": {}
       },
       {
-        "id": "51eb0fa9-2084-4d99-8ca0-1997f28f2292",
-        "title": "세금계산서 매칭 엔진",
+        "id": "90208e36-6432-4f7e-bad6-82e318a01443",
+        "title": "API 연동 모듈 개발",
         "description": "",
         "status": "todo",
-        "created_at": "2025-07-09T06:54:51.539161+00:00",
-        "updated_at": "2025-07-09T06:54:51.539161+00:00",
+        "created_at": "2025-07-09T07:11:27.043354+00:00",
+        "updated_at": "2025-07-09T07:11:27.043354+00:00",
         "started_at": null,
         "completed_at": null,
         "duration": null,
@@ -58,12 +60,12 @@
         "outputs": {}
       },
       {
-        "id": "259835e7-08c0-4e29-85bf-42d0594e2ac3",
-        "title": "지불보조장 대사 모듈",
+        "id": "79d92403-099e-4620-9cab-26a41134e58c",
+        "title": "UI/UX 디자인 시스템 구축",
         "description": "",
         "status": "todo",
-        "created_at": "2025-07-09T06:54:51.540162+00:00",
-        "updated_at": "2025-07-09T06:54:51.540162+00:00",
+        "created_at": "2025-07-09T07:11:27.045352+00:00",
+        "updated_at": "2025-07-09T07:11:27.045352+00:00",
         "started_at": null,
         "completed_at": null,
         "duration": null,
@@ -71,12 +73,12 @@
         "outputs": {}
       },
       {
-        "id": "a9415216-fde7-4bd6-ad66-995d659a5b1c",
-        "title": "리포트 생성 모듈",
+        "id": "f7abf88e-a2d6-4dfd-9d21-7ad12d5162b9",
+        "title": "테스트 환경 설정",
         "description": "",
         "status": "todo",
-        "created_at": "2025-07-09T06:54:51.543162+00:00",
-        "updated_at": "2025-07-09T06:54:51.543162+00:00",
+        "created_at": "2025-07-09T07:11:27.048352+00:00",
+        "updated_at": "2025-07-09T07:11:27.048352+00:00",
         "started_at": null,
         "completed_at": null,
         "duration": null,
@@ -84,12 +86,12 @@
         "outputs": {}
       },
       {
-        "id": "c472087f-ca1b-452f-aab5-abbae129c529",
-        "title": "에러 처리 및 로깅",
+        "id": "0b090a8d-1756-40f1-8c06-ae7859c1582e",
+        "title": "빌드 및 배포 설정",
         "description": "",
         "status": "todo",
-        "created_at": "2025-07-09T06:54:51.545161+00:00",
-        "updated_at": "2025-07-09T06:54:51.545161+00:00",
+        "created_at": "2025-07-09T07:11:27.050351+00:00",
+        "updated_at": "2025-07-09T07:11:27.050351+00:00",
         "started_at": null,
         "completed_at": null,
         "duration": null,
@@ -97,12 +99,12 @@
         "outputs": {}
       },
       {
-        "id": "49bf8d66-980c-44db-a533-30dac290ec08",
-        "title": "설정 파일 관리",
+        "id": "6378478d-18f2-43f9-b7a3-3c920e0bd05f",
+        "title": "성능 최적화",
         "description": "",
         "status": "todo",
-        "created_at": "2025-07-09T06:54:51.547161+00:00",
-        "updated_at": "2025-07-09T06:54:51.547161+00:00",
+        "created_at": "2025-07-09T07:11:27.053368+00:00",
+        "updated_at": "2025-07-09T07:11:27.053368+00:00",
         "started_at": null,
         "completed_at": null,
         "duration": null,
@@ -110,12 +112,12 @@
         "outputs": {}
       },
       {
-        "id": "b28328b3-453b-463a-85b2-f26a83ddf3a1",
-        "title": "테스트 코드 작성",
+        "id": "30ff983f-a0a9-4f10-8709-bdcd5e7cc902",
+        "title": "보안 설정",
         "description": "",
         "status": "todo",
-        "created_at": "2025-07-09T06:54:51.549162+00:00",
-        "updated_at": "2025-07-09T06:54:51.549162+00:00",
+        "created_at": "2025-07-09T07:11:27.055351+00:00",
+        "updated_at": "2025-07-09T07:11:27.055351+00:00",
         "started_at": null,
         "completed_at": null,
         "duration": null,
@@ -123,25 +125,25 @@
         "outputs": {}
       },
       {
-        "id": "8fbbe0b8-f0e2-4dd2-b695-a2de8a1287f8",
-        "title": "CLI 인터페이스",
-        "description": "",
-        "status": "todo",
-        "created_at": "2025-07-09T06:54:51.551163+00:00",
-        "updated_at": "2025-07-09T06:54:51.551163+00:00",
-        "started_at": null,
-        "completed_at": null,
-        "duration": null,
-        "notes": [],
-        "outputs": {}
-      },
-      {
-        "id": "cd6952cc-d2e7-46d3-9189-cda6f6a39105",
+        "id": "05728313-5da6-4d41-b64e-7c14fcbaeddd",
         "title": "문서화",
         "description": "",
         "status": "todo",
-        "created_at": "2025-07-09T06:54:51.553162+00:00",
-        "updated_at": "2025-07-09T06:54:51.553162+00:00",
+        "created_at": "2025-07-09T07:11:27.058359+00:00",
+        "updated_at": "2025-07-09T07:11:27.058359+00:00",
+        "started_at": null,
+        "completed_at": null,
+        "duration": null,
+        "notes": [],
+        "outputs": {}
+      },
+      {
+        "id": "2bd371d1-f569-4f61-a06b-cbe7d536f017",
+        "title": "최종 검토 및 배포",
+        "description": "",
+        "status": "todo",
+        "created_at": "2025-07-09T07:11:27.060352+00:00",
+        "updated_at": "2025-07-09T07:11:27.060352+00:00",
         "started_at": null,
         "completed_at": null,
         "duration": null,
@@ -150,8 +152,8 @@
       }
     ],
     "current_task_index": 0,
-    "created_at": "2025-07-09T06:46:12.857177+00:00",
-    "updated_at": "2025-07-09T06:54:51.553162+00:00",
+    "created_at": "2025-07-09T07:11:27.035352+00:00",
+    "updated_at": "2025-07-09T07:17:56.363099+00:00",
     "completed_at": null,
     "archived_at": null,
     "stats": {},
@@ -159,11 +161,63 @@
   },
   "events": [
     {
-      "id": "25a6251f-0ee1-4ed1-a270-7d91d8ffbb55",
+      "id": "e74c4e15-a248-41e5-872e-e06f19e5f4c3",
       "type": "task_added",
-      "timestamp": "2025-07-09T06:54:51.529165+00:00",
+      "timestamp": "2025-07-09T07:10:50.098975+00:00",
       "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
-      "task_id": "bdb6784b-b7e0-43a0-be86-43b38fed06ca",
+      "task_id": "c247c16e-a53c-44e3-a2e3-97708785a37d",
+      "user": "system",
+      "details": {
+        "title": "list",
+        "description": ""
+      },
+      "metadata": {}
+    },
+    {
+      "id": "3a834b6d-cd1f-4ba8-8ad4-3df3218491d3",
+      "type": "plan_archived",
+      "timestamp": "2025-07-09T07:11:27.032352+00:00",
+      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
+      "task_id": null,
+      "user": "system",
+      "details": {
+        "name": "subcon 신규 프로젝트 개발",
+        "archived_at": "2025-07-09T07:11:27.032352+00:00"
+      },
+      "metadata": {}
+    },
+    {
+      "id": "26101f10-fa06-440e-a5bf-6561d43b6376",
+      "type": "plan_created",
+      "timestamp": "2025-07-09T07:11:27.035352+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": null,
+      "user": "system",
+      "details": {
+        "name": "subcon 신규 프로젝트 개발",
+        "description": ""
+      },
+      "metadata": {}
+    },
+    {
+      "id": "cfc2b83a-e032-4ec0-ac39-1665ee3fd094",
+      "type": "plan_started",
+      "timestamp": "2025-07-09T07:11:27.035352+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": null,
+      "user": "system",
+      "details": {
+        "name": "subcon 신규 프로젝트 개발",
+        "task_count": 0
+      },
+      "metadata": {}
+    },
+    {
+      "id": "6156a306-6018-40f0-8d8d-6f3a11e52d2d",
+      "type": "task_added",
+      "timestamp": "2025-07-09T07:11:27.037357+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "cbade10c-2488-4328-ad90-34234fa2ad0b",
       "user": "system",
       "details": {
         "title": "프로젝트 구조 개선 및 모듈화",
@@ -172,137 +226,151 @@
       "metadata": {}
     },
     {
-      "id": "a5e3c9fb-627c-4452-9a61-9248068413b2",
+      "id": "5b16937d-635b-4b2a-9a08-3fc8ffbd1471",
       "type": "task_added",
-      "timestamp": "2025-07-09T06:54:51.535163+00:00",
-      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
-      "task_id": "9017ec89-11c4-435d-a266-09dd8558d7f3",
+      "timestamp": "2025-07-09T07:11:27.039353+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "3ca803f7-065b-48a9-809c-cd1edfcf0ebb",
       "user": "system",
       "details": {
-        "title": "데이터 로더 모듈 개발",
+        "title": "React 컴포넌트 구조 설계",
         "description": ""
       },
       "metadata": {}
     },
     {
-      "id": "e2cc372d-ea8c-4c38-91a8-bbaced4b5fd1",
+      "id": "dbd36b5e-a274-4b47-be49-94026a97b025",
       "type": "task_added",
-      "timestamp": "2025-07-09T06:54:51.537162+00:00",
-      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
-      "task_id": "092c2a49-8140-4c0b-8deb-1bc16a2a7e30",
+      "timestamp": "2025-07-09T07:11:27.041355+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "ffb74659-621b-4633-840f-fd24404dc649",
       "user": "system",
       "details": {
-        "title": "매입 데이터 처리 모듈",
+        "title": "상태 관리 시스템 구현",
         "description": ""
       },
       "metadata": {}
     },
     {
-      "id": "dd9df1a6-b552-48e2-a887-7aea57b0a048",
+      "id": "e6e86c36-88ee-4418-b575-c14641e62320",
       "type": "task_added",
-      "timestamp": "2025-07-09T06:54:51.539161+00:00",
-      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
-      "task_id": "51eb0fa9-2084-4d99-8ca0-1997f28f2292",
+      "timestamp": "2025-07-09T07:11:27.043354+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "90208e36-6432-4f7e-bad6-82e318a01443",
       "user": "system",
       "details": {
-        "title": "세금계산서 매칭 엔진",
+        "title": "API 연동 모듈 개발",
         "description": ""
       },
       "metadata": {}
     },
     {
-      "id": "95ffd5fa-ecc0-4d26-85f5-1c82fbf76ee5",
+      "id": "47ce4450-cbbb-4fb1-b272-1bfa62dcce7b",
       "type": "task_added",
-      "timestamp": "2025-07-09T06:54:51.541162+00:00",
-      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
-      "task_id": "259835e7-08c0-4e29-85bf-42d0594e2ac3",
+      "timestamp": "2025-07-09T07:11:27.045352+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "79d92403-099e-4620-9cab-26a41134e58c",
       "user": "system",
       "details": {
-        "title": "지불보조장 대사 모듈",
+        "title": "UI/UX 디자인 시스템 구축",
         "description": ""
       },
       "metadata": {}
     },
     {
-      "id": "ca0bb000-6e45-47c7-b004-ef6338f2094a",
+      "id": "e7c9819f-7542-46bc-a54d-d737ad4da318",
       "type": "task_added",
-      "timestamp": "2025-07-09T06:54:51.543162+00:00",
-      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
-      "task_id": "a9415216-fde7-4bd6-ad66-995d659a5b1c",
+      "timestamp": "2025-07-09T07:11:27.048352+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "f7abf88e-a2d6-4dfd-9d21-7ad12d5162b9",
       "user": "system",
       "details": {
-        "title": "리포트 생성 모듈",
+        "title": "테스트 환경 설정",
         "description": ""
       },
       "metadata": {}
     },
     {
-      "id": "56b512f5-9878-4839-afdd-0e48a8fe3692",
+      "id": "8be09dbd-fa26-4cf5-b6c4-edc99669918e",
       "type": "task_added",
-      "timestamp": "2025-07-09T06:54:51.545161+00:00",
-      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
-      "task_id": "c472087f-ca1b-452f-aab5-abbae129c529",
+      "timestamp": "2025-07-09T07:11:27.050351+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "0b090a8d-1756-40f1-8c06-ae7859c1582e",
       "user": "system",
       "details": {
-        "title": "에러 처리 및 로깅",
+        "title": "빌드 및 배포 설정",
         "description": ""
       },
       "metadata": {}
     },
     {
-      "id": "d9654ff8-7edb-440d-871b-61c4ec79fab7",
+      "id": "52e8f9ef-53e1-4fbe-869a-319c2a376888",
       "type": "task_added",
-      "timestamp": "2025-07-09T06:54:51.547161+00:00",
-      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
-      "task_id": "49bf8d66-980c-44db-a533-30dac290ec08",
+      "timestamp": "2025-07-09T07:11:27.053368+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "6378478d-18f2-43f9-b7a3-3c920e0bd05f",
       "user": "system",
       "details": {
-        "title": "설정 파일 관리",
+        "title": "성능 최적화",
         "description": ""
       },
       "metadata": {}
     },
     {
-      "id": "c4c99949-a38d-4d31-898f-8a979e548a5b",
+      "id": "7e13fde8-875d-487b-906e-cf12e68919fd",
       "type": "task_added",
-      "timestamp": "2025-07-09T06:54:51.549162+00:00",
-      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
-      "task_id": "b28328b3-453b-463a-85b2-f26a83ddf3a1",
+      "timestamp": "2025-07-09T07:11:27.055351+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "30ff983f-a0a9-4f10-8709-bdcd5e7cc902",
       "user": "system",
       "details": {
-        "title": "테스트 코드 작성",
+        "title": "보안 설정",
         "description": ""
       },
       "metadata": {}
     },
     {
-      "id": "8fcee96a-9ec9-43d8-8c76-54887869ec6d",
+      "id": "a1381b70-0698-4410-990a-ab8e0ff7e93d",
       "type": "task_added",
-      "timestamp": "2025-07-09T06:54:51.551163+00:00",
-      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
-      "task_id": "8fbbe0b8-f0e2-4dd2-b695-a2de8a1287f8",
-      "user": "system",
-      "details": {
-        "title": "CLI 인터페이스",
-        "description": ""
-      },
-      "metadata": {}
-    },
-    {
-      "id": "0001dcc3-4ccf-4ee8-9d6b-4141b490754a",
-      "type": "task_added",
-      "timestamp": "2025-07-09T06:54:51.553162+00:00",
-      "plan_id": "718f3c05-5844-46e6-845e-cfa0de0c3b12",
-      "task_id": "cd6952cc-d2e7-46d3-9189-cda6f6a39105",
+      "timestamp": "2025-07-09T07:11:27.058359+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "05728313-5da6-4d41-b64e-7c14fcbaeddd",
       "user": "system",
       "details": {
         "title": "문서화",
         "description": ""
       },
       "metadata": {}
+    },
+    {
+      "id": "f75627a5-5a87-49b3-b37b-df45622dfabf",
+      "type": "task_added",
+      "timestamp": "2025-07-09T07:11:27.060352+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "2bd371d1-f569-4f61-a06b-cbe7d536f017",
+      "user": "system",
+      "details": {
+        "title": "최종 검토 및 배포",
+        "description": ""
+      },
+      "metadata": {}
+    },
+    {
+      "id": "3315fb61-e8cc-48f8-ac1c-1502ddf1f401",
+      "type": "task_completed",
+      "timestamp": "2025-07-09T07:17:56.363099+00:00",
+      "plan_id": "876a4841-252e-4a95-b619-6092d13f0af7",
+      "task_id": "cbade10c-2488-4328-ad90-34234fa2ad0b",
+      "user": "system",
+      "details": {
+        "title": "프로젝트 구조 개선 및 모듈화",
+        "duration": null,
+        "note": "프로젝트 구조 개선 완료! PyQt6 기반 데스크톱 앱 구조 생성"
+      },
+      "metadata": {}
     }
   ],
   "version": "3.0.0",
-  "last_saved": "2025-07-09T07:00:18.393852+00:00",
+  "last_saved": "2025-07-09T07:17:56.363099+00:00",
   "metadata": {}
 }
