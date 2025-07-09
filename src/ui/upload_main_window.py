@@ -317,21 +317,35 @@ class UploadMainWindow(QMainWindow):
 
     def load_data_from_file(self, file_path: str, file_type: str):
         """파일에서 데이터 로드"""
-        excel_service = ExcelService()
+        try:
+            if file_type == 'supplier':
+                # 공급업체 데이터 로드
+                suppliers = ExcelService.load_suppliers(file_path)
+                for supplier in suppliers:
+                    self.data_manager.add_supplier(supplier)
+                self.add_log(f"  - {len(suppliers)}개 공급업체 로드 완료")
 
-        if file_type == 'supplier':
-            # 공급업체 데이터 로드
-            df = pd.read_excel(file_path)
-            self.data_manager.load_suppliers_from_df(df)
-            self.add_log(f"  - {len(df)}개 공급업체 로드 완료")
+            elif file_type == 'purchase':
+                # 구매 데이터 로드
+                purchases = ExcelService.load_purchases(file_path)
+                for purchase in purchases:
+                    self.data_manager.add_purchase(purchase)
+                self.add_log(f"  - {len(purchases)}개 구매 내역 로드 완료")
 
-        elif file_type == 'purchase':
-            # 구매 데이터 로드
-            df = pd.read_excel(file_path)
-            self.data_manager.load_purchases_from_df(df)
-            self.add_log(f"  - {len(df)}개 구매 내역 로드 완료")
+            elif file_type == 'payment':
+                # 지급 데이터 로드
+                payments = ExcelService.load_payments(file_path)
+                self.data_manager.payments.extend(payments)
+                self.add_log(f"  - {len(payments)}개 지급 내역 로드 완료")
 
-        # payment, tax_invoice도 유사하게 구현
+            elif file_type == 'tax_invoice':
+                # 세금계산서 데이터 로드
+                tax_invoices = ExcelService.load_tax_invoices(file_path)
+                self.data_manager.tax_invoices.extend(tax_invoices)
+                self.add_log(f"  - {len(tax_invoices)}개 세금계산서 로드 완료")
+
+        except Exception as e:
+            raise Exception(f"{file_type} 데이터 로드 실패: {str(e)}")
 
     def process_reconciliation(self):
         """대사 처리 실행"""
