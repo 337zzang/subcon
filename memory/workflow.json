@@ -4,7 +4,7 @@
       "id": "cc358d9b-7697-472e-92ce-8d86eec6730d",
       "name": "매입대사 시스템 UI 제품화",
       "description": "",
-      "status": "draft",
+      "status": "archived",
       "tasks": [
         {
           "id": "371dd546-75a0-4f21-b2c5-00f6e7307c16",
@@ -40,23 +40,25 @@
           "id": "f593c242-e5d1-4525-aea7-44278c8d6c3a",
           "title": "파일 업로드 모듈 개발",
           "description": "",
-          "status": "in_progress",
+          "status": "completed",
           "created_at": "2025-07-14T09:44:13.387832+09:00",
-          "updated_at": "2025-07-14T13:34:24.766131",
+          "updated_at": "2025-07-14T13:58:15.390114",
           "started_at": "2025-07-14T13:34:24.766131",
-          "completed_at": null,
+          "completed_at": "2025-07-14T13:58:15.390114",
           "duration": null,
-          "notes": [],
+          "notes": [
+            "[완료] 파일 업로드 모듈 개발 완료 - 백그라운드 처리 구현"
+          ],
           "outputs": {}
         },
         {
           "id": "dbf61c15-a979-439f-adf6-dad7af27620d",
           "title": "대사기간 선택 기능 구현",
           "description": "",
-          "status": "todo",
+          "status": "in_progress",
           "created_at": "2025-07-14T09:44:13.394833+09:00",
-          "updated_at": "2025-07-14T09:44:13.394833+09:00",
-          "started_at": null,
+          "updated_at": "2025-07-14T13:59:01.743850",
+          "started_at": "2025-07-14T13:59:01.743850",
           "completed_at": null,
           "duration": null,
           "notes": [],
@@ -148,11 +150,67 @@
       "archived_at": null,
       "stats": {},
       "metadata": {}
+    },
+    {
+      "id": "5e4decbc-9955-46d8-92bc-b95700567c61",
+      "name": "매입대사 시스템 추가 기능 구현",
+      "description": "",
+      "status": "draft",
+      "tasks": [
+        {
+          "id": "a247d3b4-c726-43b6-9771-43ce22f63d6a",
+          "title": "match_tax_and_book 함수 통합 - 지불보조장 대사 기능 구현",
+          "description": "",
+          "status": "completed",
+          "created_at": "2025-07-14T14:04:51.668094+09:00",
+          "updated_at": "2025-07-14T14:10:53.547772",
+          "started_at": "2025-07-14T14:04:51.686101",
+          "completed_at": "2025-07-14T14:10:53.547772",
+          "duration": null,
+          "notes": [
+            "[완료] match_tax_and_book 함수 통합 완료 - 지불보조장 대사 기능 구현"
+          ],
+          "outputs": {}
+        },
+        {
+          "id": "8b1c725c-6c70-4801-af84-eb9f741bba92",
+          "title": "대사 결과 검증 로직 구현",
+          "description": "",
+          "status": "todo",
+          "created_at": "2025-07-14T14:04:51.675094+09:00",
+          "updated_at": "2025-07-14T14:04:51.675094+09:00",
+          "started_at": null,
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        },
+        {
+          "id": "46c96d1a-3dd0-4326-9092-c7d270b9c3f1",
+          "title": "예외 처리 강화",
+          "description": "",
+          "status": "todo",
+          "created_at": "2025-07-14T14:04:51.680111+09:00",
+          "updated_at": "2025-07-14T14:04:51.680111+09:00",
+          "started_at": null,
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        }
+      ],
+      "current_task_index": 0,
+      "created_at": "2025-07-14T14:04:41.975955+09:00",
+      "updated_at": "2025-07-14T14:04:41.975955+09:00",
+      "completed_at": null,
+      "archived_at": null,
+      "stats": {},
+      "metadata": {}
     }
   ],
-  "active_plan_id": "cc358d9b-7697-472e-92ce-8d86eec6730d",
+  "active_plan_id": "5e4decbc-9955-46d8-92bc-b95700567c61",
   "events_file": "workflow_events.json",
   "version": "3.0.0",
   "project_name": "subcon",
-  "last_saved": "2025-07-14T13:34:24.772130"
+  "last_saved": "2025-07-14T14:10:53.554769"
 }

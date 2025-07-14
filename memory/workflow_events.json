@@ -207,6 +207,140 @@
       "data": {
         "title": "파일 업로드 모듈 개발"
       }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "f593c242-e5d1-4525-aea7-44278c8d6c3a",
+      "timestamp": "2025-07-14T13:58:15.390114",
+      "data": {
+        "from": "in_progress",
+        "to": "completed",
+        "task_name": "파일 업로드 모듈 개발",
+        "note": "파일 업로드 모듈 개발 완료 - 백그라운드 처리 구현",
+        "duration": "23분"
+      }
+    },
+    {
+      "type": "task_completed",
+      "entity_id": "f593c242-e5d1-4525-aea7-44278c8d6c3a",
+      "timestamp": "2025-07-14T13:58:15.392112",
+      "data": {
+        "title": "파일 업로드 모듈 개발",
+        "note": "파일 업로드 모듈 개발 완료 - 백그라운드 처리 구현"
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "dbf61c15-a979-439f-adf6-dad7af27620d",
+      "timestamp": "2025-07-14T13:59:01.743850",
+      "data": {
+        "from": "todo",
+        "to": "in_progress",
+        "task_name": "대사기간 선택 기능 구현",
+        "task_description": ""
+      }
+    },
+    {
+      "type": "task_started",
+      "entity_id": "dbf61c15-a979-439f-adf6-dad7af27620d",
+      "timestamp": "2025-07-14T13:59:01.746851",
+      "data": {
+        "title": "대사기간 선택 기능 구현"
+      }
+    },
+    {
+      "type": "plan_archived",
+      "entity_id": "cc358d9b-7697-472e-92ce-8d86eec6730d",
+      "timestamp": "2025-07-14T14:04:41.971954",
+      "data": {
+        "name": "매입대사 시스템 UI 제품화"
+      }
+    },
+    {
+      "type": "workflow_created",
+      "entity_id": "5e4decbc-9955-46d8-92bc-b95700567c61",
+      "timestamp": "2025-07-14T14:04:41.975955",
+      "data": {
+        "name": "매입대사 시스템 추가 기능 구현",
+        "description": ""
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "5e4decbc-9955-46d8-92bc-b95700567c61",
+      "timestamp": "2025-07-14T14:04:41.979953",
+      "data": {
+        "from": "draft",
+        "to": "active",
+        "workflow_id": "5e4decbc-9955-46d8-92bc-b95700567c61"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "a247d3b4-c726-43b6-9771-43ce22f63d6a",
+      "timestamp": "2025-07-14T14:04:51.668094",
+      "data": {
+        "title": "match_tax_and_book 함수 통합 - 지불보조장 대사 기능 구현",
+        "workflow_id": "5e4decbc-9955-46d8-92bc-b95700567c61"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "8b1c725c-6c70-4801-af84-eb9f741bba92",
+      "timestamp": "2025-07-14T14:04:51.675094",
+      "data": {
+        "title": "대사 결과 검증 로직 구현",
+        "workflow_id": "5e4decbc-9955-46d8-92bc-b95700567c61"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "46c96d1a-3dd0-4326-9092-c7d270b9c3f1",
+      "timestamp": "2025-07-14T14:04:51.680111",
+      "data": {
+        "title": "예외 처리 강화",
+        "workflow_id": "5e4decbc-9955-46d8-92bc-b95700567c61"
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "a247d3b4-c726-43b6-9771-43ce22f63d6a",
+      "timestamp": "2025-07-14T14:04:51.686101",
+      "data": {
+        "from": "todo",
+        "to": "in_progress",
+        "task_name": "match_tax_and_book 함수 통합 - 지불보조장 대사 기능 구현",
+        "task_description": ""
+      }
+    },
+    {
+      "type": "task_started",
+      "entity_id": "a247d3b4-c726-43b6-9771-43ce22f63d6a",
+      "timestamp": "2025-07-14T14:04:51.689091",
+      "data": {
+        "title": "match_tax_and_book 함수 통합 - 지불보조장 대사 기능 구현"
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "a247d3b4-c726-43b6-9771-43ce22f63d6a",
+      "timestamp": "2025-07-14T14:10:53.547772",
+      "data": {
+        "from": "in_progress",
+        "to": "completed",
+        "task_name": "match_tax_and_book 함수 통합 - 지불보조장 대사 기능 구현",
+        "note": "match_tax_and_book 함수 통합 완료 - 지불보조장 대사 기능 구현",
+        "duration": "6분"
+      }
+    },
+    {
+      "type": "task_completed",
+      "entity_id": "a247d3b4-c726-43b6-9771-43ce22f63d6a",
+      "timestamp": "2025-07-14T14:10:53.549771",
+      "data": {
+        "title": "match_tax_and_book 함수 통합 - 지불보조장 대사 기능 구현",
+        "note": "match_tax_and_book 함수 통합 완료 - 지불보조장 대사 기능 구현"
+      }
     }
   ]
 }

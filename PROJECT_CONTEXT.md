@@ -1,7 +1,7 @@
 # 프로젝트 컨텍스트: subcon
 
 > 이 문서는 프로젝트의 상세 컨텍스트와 구조를 설명합니다.
-> 최종 업데이트: 2025-07-14 11:42:38
+> 최종 업데이트: 2025-07-14 14:15:46
 
 ## 🎯 프로젝트 개요
 
@@ -45,9 +45,16 @@ subcon/
 ├── docs/
 │   ├── design/
 │   │   ├── purchase_reconciliation_ui_task01_notebook_analysis_design_20250714.md
+│   │   ├── purchase_reconciliation_ui_task02_ui_ux_design_design_20250714.md
+│   │   ├── purchase_reconciliation_ui_task03_file_upload_module_design_20250714.md
 │   ├── error/
+│   │   ├── purchase_reconciliation_ui_task02_excel_engine_error_20250714_114651.md
+│   │   ├── purchase_reconciliation_ui_task03_reconciliation_init_error_20250714_134509.md
 │   └── report/
+│       ├── additional_features_task01_match_tax_book_complete_20250714.md
+│       ├── partial_matching_implementation_20250714.md
 │       ├── purchase_reconciliation_ui_task01_notebook_analysis_complete_20250714.md
+│       └── ... (3 more files)
 ├── memory/
 │   └── workflow_v3/
 │       └── backups/
@@ -73,9 +80,13 @@ subcon/
     ├── ui/
     │   ├── dialogs/
     │   │   ├── __init__.py
-    │   └── widgets/
+    │   ├── widgets/
+    │   │   ├── __init__.py
+    │   │   ├── analysis_widget.py
+    │   │   ├── progress_dialog.py
+    │   └── workers/
     │       ├── __init__.py
-    │       ├── analysis_widget.py
+    │       ├── reconciliation_worker.py
     │   ├── __init__.py
     │   ├── main_window_v2.py
     │   ├── upload_main_window.py
@@ -84,23 +95,23 @@ subcon/
     ├── __init__.py
     ├── main.py
 ├── file_directory.md
+├── kfunction.py
 ├── PROJECT_CONTEXT.md
-├── README.md
-└── ... (1 more files)
+└── ... (2 more files)
 ```
 - `.gitignore`: Git 무시 파일
 - `requirements.txt`: Python 의존성
 
 ## 📊 프로젝트 통계
 
-- **전체 파일 수**: 51개
-- **디렉토리 수**: 20개
+- **전체 파일 수**: 65개
+- **디렉토리 수**: 21개
 - **파일 타입 분포**:
-  - `.py`: 22개 (43.1%)
-  - `.xlsx`: 10개 (19.6%)
-  - `.json`: 8개 (15.7%)
-  - `.md`: 5개 (9.8%)
-  - `.bat`: 3개 (5.9%)
+  - `.py`: 26개 (40.0%)
+  - `.md`: 14개 (21.5%)
+  - `.xlsx`: 10개 (15.4%)
+  - `.json`: 8개 (12.3%)
+  - `.bat`: 4개 (6.2%)
 
 ## 🚀 빠른 시작
 

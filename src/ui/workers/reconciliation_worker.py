@@ -46,7 +46,7 @@ class ReconciliationWorker(QThread):
                 'purchase_detail': self.file_paths.get('supplier_purchase'),
                 'standard': self.file_paths.get('standard'),
                 'tax_invoice': self.file_paths.get('tax_invoice'),
-                'payment_book': self.file_paths.get('payment_ledger'),  # 필수!
+                'payment_ledger': self.file_paths.get('payment_ledger'),  # 필수! (키 수정됨)
                 'tax_invoice_wis': self.file_paths.get('tax_invoice_wis')
             }
             

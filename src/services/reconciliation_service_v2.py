@@ -847,6 +847,9 @@ class ReconciliationService:
             self._process_payment_book_matching()
         
         # 지불예상금액 계산
+        # NaN 값을 0으로 채우고 계산
+        self.df_final_pivot["국세청공급가액"] = self.df_final_pivot["국세청공급가액"].fillna(0)
+        self.df_final_pivot["국세청세액"] = self.df_final_pivot["국세청세액"].fillna(0)
         self.df_final_pivot["지불예상금액"] = self.df_final_pivot["국세청공급가액"] + self.df_final_pivot["국세청세액"]
     
     def _process_payment_book_matching(self, tolerance=1e-6):

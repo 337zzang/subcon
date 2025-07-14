@@ -24,6 +24,26 @@ from ..services.reconciliation_service_v2 import ReconciliationService
 from .workers.reconciliation_worker import ReconciliationWorker
 from .widgets.progress_dialog import ProgressDialog
 
+
+class FileValidationThread(QThread):
+    """파일 검증을 위한 백그라운드 스레드"""
+    validation_complete = pyqtSignal(bool, str, str)  # success, message, file_type
+    
+    def __init__(self, file_path, file_type):
+        super().__init__()
+        self.file_path = file_path
+        self.file_type = file_type
+        
+    def run(self):
+        try:
+            # Excel 파일 읽기 (백그라운드에서 실행)
+            df = read_excel_data(self.file_path)
+            if len(df) > 5:
+                df = df.head(5)  # 검증용으로 5행만 확인
+            self.validation_complete.emit(True, "검증 완료", self.file_type)
+        except Exception as e:
+            self.validation_complete.emit(False, str(e), self.file_type)
+
 class FileUploadWidget(QWidget):
     """파일 업로드 위젯"""
     file_uploaded = pyqtSignal(str, str)  # (file_type, file_path)
@@ -32,6 +52,7 @@ class FileUploadWidget(QWidget):
         super().__init__()
         self.file_type = file_type
         self.file_path = None
+        self.validation_thread = None
         self.init_ui(file_label)
 
     def init_ui(self, file_label: str):
@@ -53,7 +74,7 @@ class FileUploadWidget(QWidget):
 
         # 상태 표시
         self.status_label = QLabel("⏳ 대기")
-        self.status_label.setMinimumWidth(60)
+        self.status_label.setMinimumWidth(80)
 
         layout.addWidget(self.label)
         layout.addWidget(self.path_edit)
@@ -79,23 +100,38 @@ class FileUploadWidget(QWidget):
         if file_path:
             self.file_path = file_path
             self.path_edit.setText(Path(file_path).name)
+            # 상태를 "검증중"으로 변경
+            self.status_label.setText("🔄 검증중...")
+            self.status_label.setStyleSheet("color: orange;")
+            self.btn_upload.setEnabled(False)  # 검증 중에는 버튼 비활성화
             self.validate_file()
 
     def validate_file(self):
-        """파일 검증"""
-        try:
-            # 간단한 검증 - 파일을 열 수 있는지 확인
-            # kfunction의 read_excel_data 사용 (첫 5행만 읽어서 검증)
-            df = read_excel_data(self.file_path)
-            if len(df) > 5:
-                df = df.head(5)  # 검증용으로 5행만 확인
+        """파일 검증 (백그라운드)"""
+        # 이전 검증 스레드가 있으면 정리
+        if self.validation_thread and self.validation_thread.isRunning():
+            self.validation_thread.terminate()
+            self.validation_thread.wait()
+            
+        # 백그라운드 스레드에서 파일 검증
+        self.validation_thread = FileValidationThread(self.file_path, self.file_type)
+        self.validation_thread.validation_complete.connect(self.on_validation_complete)
+        self.validation_thread.start()
+
+    def on_validation_complete(self, success: bool, message: str, file_type: str):
+        """검증 완료 처리"""
+        self.btn_upload.setEnabled(True)  # 버튼 다시 활성화
+        
+        if success:
             self.status_label.setText("✅ 확인")
             self.status_label.setStyleSheet("color: green;")
             self.file_uploaded.emit(self.file_type, self.file_path)
-        except Exception as e:
+        else:
             self.status_label.setText("❌ 오류")
             self.status_label.setStyleSheet("color: red;")
-            QMessageBox.warning(self, "파일 오류", f"파일을 읽을 수 없습니다:\n{str(e)}")
+            QMessageBox.warning(self, "파일 오류", f"파일을 읽을 수 없습니다:\n{message}")
+            self.file_path = None
+            self.path_edit.clear()
 
     def reset(self):
         """초기화"""
@@ -103,6 +139,7 @@ class FileUploadWidget(QWidget):
         self.path_edit.clear()
         self.status_label.setText("⏳ 대기")
         self.status_label.setStyleSheet("")
+        self.btn_upload.setEnabled(True)
 
         
 
