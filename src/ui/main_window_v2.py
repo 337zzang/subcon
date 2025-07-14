@@ -16,7 +16,7 @@ from datetime import datetime
 import json
 
 from src.services.excel_service import ExcelService
-from src.services.reconciliation_service import ReconciliationService
+from ..services.reconciliation_service_v2 import ReconciliationService
 
 class FileUploadWidget(QWidget):
     """파일 업로드 위젯"""

@@ -4,7 +4,7 @@
 """
 import sys
 from PyQt6.QtWidgets import QApplication
-from src.ui.upload_main_window import UploadMainWindow
+from src.ui.main_window_v2 import ImprovedMainWindow
 
 
 def main():
@@ -16,7 +16,7 @@ def main():
     app.setStyle('Fusion')
     
     # 메인 윈도우 생성 및 표시
-    window = UploadMainWindow()
+    window = ImprovedMainWindow()
     window.setWindowTitle("매입대사 시스템 v2.0")
     window.show()
 
