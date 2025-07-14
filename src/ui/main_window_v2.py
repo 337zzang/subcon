@@ -14,6 +14,8 @@ from datetime import datetime
 import json
 import sys
 import os
+import queue
+import threading
 
 # kfunction 모듈 경로 추가
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -24,6 +26,10 @@ from ..services.reconciliation_service_v2 import ReconciliationService
 from .workers.reconciliation_worker import ReconciliationWorker
 from .widgets.progress_dialog import ProgressDialog
 
+# 전역 큐와 결과 딕셔너리
+excel_read_queue = queue.Queue()
+excel_read_results = {}
+
 
 class FileValidationThread(QThread):
     """파일 검증을 위한 백그라운드 스레드"""
@@ -33,14 +39,34 @@ class FileValidationThread(QThread):
         super().__init__()
         self.file_path = file_path
         self.file_type = file_type
+        self.request_id = f"{file_type}_{threading.get_ident()}"
         
     def run(self):
         try:
-            # Excel 파일 읽기 (백그라운드에서 실행)
-            df = read_excel_data(self.file_path)
-            if len(df) > 5:
-                df = df.head(5)  # 검증용으로 5행만 확인
-            self.validation_complete.emit(True, "검증 완료", self.file_type)
+            # 큐에 읽기 요청 추가
+            excel_read_queue.put({
+                'id': self.request_id,
+                'file_path': self.file_path,
+                'file_type': self.file_type
+            })
+            
+            # 결과를 기다림 (최대 30초)
+            timeout = 30
+            elapsed = 0
+            while elapsed < timeout:
+                if self.request_id in excel_read_results:
+                    result = excel_read_results.pop(self.request_id)
+                    if result['success']:
+                        self.validation_complete.emit(True, "검증 완료", self.file_type)
+                    else:
+                        self.validation_complete.emit(False, result['error'], self.file_type)
+                    return
+                self.msleep(100)  # 100ms 대기
+                elapsed += 0.1
+                
+            # 타임아웃
+            self.validation_complete.emit(False, "파일 읽기 타임아웃", self.file_type)
+            
         except Exception as e:
             self.validation_complete.emit(False, str(e), self.file_type)
 
@@ -85,6 +111,10 @@ class FileUploadWidget(QWidget):
 
     def select_file(self):
         """파일 선택"""
+        # UI 이벤트 처리를 위해 잠시 딜레이
+        from PyQt6.QtWidgets import QApplication
+        QApplication.processEvents()
+        
         # 부모 윈도우에서 기본 폴더 가져오기
         default_folder = ""
         if hasattr(self.window(), 'upload_folder'):
@@ -103,15 +133,17 @@ class FileUploadWidget(QWidget):
             # 상태를 "검증중"으로 변경
             self.status_label.setText("🔄 검증중...")
             self.status_label.setStyleSheet("color: orange;")
-            self.btn_upload.setEnabled(False)  # 검증 중에는 버튼 비활성화
+            # 버튼은 활성화 상태로 유지 (다른 파일 선택 가능)
             self.validate_file()
 
     def validate_file(self):
         """파일 검증 (백그라운드)"""
-        # 이전 검증 스레드가 있으면 정리
-        if self.validation_thread and self.validation_thread.isRunning():
-            self.validation_thread.terminate()
-            self.validation_thread.wait()
+        # 이전 검증 스레드가 있으면 결과를 무시하도록 표시
+        if hasattr(self, 'validation_thread') and self.validation_thread and self.validation_thread.isRunning():
+            try:
+                self.validation_thread.validation_complete.disconnect()
+            except:
+                pass  # 이미 disconnect된 경우 무시
             
         # 백그라운드 스레드에서 파일 검증
         self.validation_thread = FileValidationThread(self.file_path, self.file_type)
@@ -120,8 +152,6 @@ class FileUploadWidget(QWidget):
 
     def on_validation_complete(self, success: bool, message: str, file_type: str):
         """검증 완료 처리"""
-        self.btn_upload.setEnabled(True)  # 버튼 다시 활성화
-        
         if success:
             self.status_label.setText("✅ 확인")
             self.status_label.setStyleSheet("color: green;")
@@ -154,7 +184,66 @@ class ImprovedMainWindow(QMainWindow):
         self.upload_folder = self.settings.value('upload_folder', '')
         self.download_folder = self.settings.value('download_folder', '')
         
+        # Excel 읽기 큐 처리를 위한 타이머
+        self.excel_queue_timer = QTimer()
+        self.excel_queue_timer.timeout.connect(self.process_excel_queue)
+        self.excel_queue_timer.start(50)  # 50ms마다 큐 체크 (더 빠른 응답)
+        
         self.init_ui()
+    
+    def process_excel_queue(self):
+        """Excel 읽기 큐 처리 (메인 스레드에서 실행)"""
+        try:
+            # 큐에서 요청 가져오기 (비블로킹)
+            request = excel_read_queue.get_nowait()
+            
+            request_id = request['id']
+            file_path = request['file_path']
+            
+            # Excel 읽기를 지연 실행으로 변경
+            QTimer.singleShot(0, lambda: self.process_excel_file(request_id, file_path))
+                
+        except queue.Empty:
+            # 큐가 비어있으면 무시
+            pass
+        except Exception as e:
+            print(f"Excel 큐 처리 오류: {str(e)}")
+    
+    def process_excel_file(self, request_id, file_path):
+        """Excel 파일 실제 처리 (비동기)"""
+        try:
+            # 파일 크기 확인
+            file_size = os.path.getsize(file_path) / (1024 * 1024)  # MB
+            
+            if file_size > 10:  # 10MB 이상이면 경고
+                print(f"큰 파일 처리 중: {file_size:.1f}MB")
+            
+            # UI 이벤트 처리를 위해 QApplication 사용
+            from PyQt6.QtWidgets import QApplication
+            
+            # Excel 파일 읽기 전 UI 이벤트 처리
+            QApplication.processEvents()
+            
+            # Excel 파일 읽기 (COM 객체 사용)
+            df = read_excel_data(file_path)
+            
+            # 읽기 후 UI 이벤트 처리
+            QApplication.processEvents()
+            
+            if len(df) > 5:
+                df = df.head(5)  # 검증용으로 5행만 확인
+            
+            # 성공 결과 저장
+            excel_read_results[request_id] = {
+                'success': True,
+                'data': df
+            }
+        except Exception as e:
+            # 실패 결과 저장
+            excel_read_results[request_id] = {
+                'success': False,
+                'error': str(e)
+            }
 
     def init_ui(self):
         """UI 초기화"""
@@ -618,6 +707,21 @@ class ImprovedMainWindow(QMainWindow):
             self.log(f"✅ 설정이 저장되었습니다.")
             self.log(f"  - 업로드 폴더: {self.upload_folder or '(미설정)'}")
             self.log(f"  - 다운로드 폴더: {self.download_folder or '(미설정)'}")
+
+    def closeEvent(self, event):
+        """프로그램 종료 시 정리"""
+        # Excel 큐 처리 타이머 정지
+        if hasattr(self, 'excel_queue_timer'):
+            self.excel_queue_timer.stop()
+        
+        # 큐 비우기
+        while not excel_read_queue.empty():
+            try:
+                excel_read_queue.get_nowait()
+            except:
+                pass
+                
+        event.accept()
 
 
 class SettingsDialog(QDialog):

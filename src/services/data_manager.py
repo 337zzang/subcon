@@ -5,6 +5,7 @@ from typing import List, Dict, Optional, Tuple, Any
 from decimal import Decimal
 import pandas as pd
 from collections import defaultdict
+import os
 
 from ..models import (
     Supplier, SupplierProduct, Purchase, PurchaseSummary,
@@ -26,6 +27,9 @@ class DataManager:
         self.payments: List[Payment] = []
         self.payment_ledgers: Dict[str, PaymentLedger] = {}
         self.processing_fees: List[ProcessingFee] = []
+        
+        # 파일 캐시 추가
+        self._file_cache: Dict[str, pd.DataFrame] = {}
 
     def clear_all(self):
         """모든 데이터 초기화"""
@@ -38,6 +42,31 @@ class DataManager:
         self.payments.clear()
         self.payment_ledgers.clear()
         self.processing_fees.clear()
+        self._file_cache.clear()  # 파일 캐시도 초기화
+
+    # 파일 캐싱 관련 메서드
+    def cache_file_data(self, file_path: str, data: pd.DataFrame):
+        """파일 데이터 캐싱"""
+        normalized_path = os.path.normpath(file_path).lower()  # 경로 정규화
+        self._file_cache[normalized_path] = data.copy()  # 데이터 복사본 저장
+        
+    def get_cached_data(self, file_path: str) -> Optional[pd.DataFrame]:
+        """캐싱된 데이터 반환"""
+        normalized_path = os.path.normpath(file_path).lower()
+        return self._file_cache.get(normalized_path)
+        
+    def is_file_cached(self, file_path: str) -> bool:
+        """파일이 캐싱되어 있는지 확인"""
+        normalized_path = os.path.normpath(file_path).lower()
+        return normalized_path in self._file_cache
+        
+    def clear_file_cache(self):
+        """파일 캐시만 초기화"""
+        self._file_cache.clear()
+        
+    def get_cache_size(self) -> int:
+        """캐시된 파일 수 반환"""
+        return len(self._file_cache)
 
     # 협력사 관련 메서드
     def add_supplier(self, supplier: Supplier):

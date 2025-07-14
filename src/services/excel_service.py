@@ -104,9 +104,13 @@ class ExcelService:
         return payments
 
     @staticmethod
-    def load_tax_invoices(file_path: str) -> List[TaxInvoice]:
+    def load_tax_invoices(file_path: str, cached_df: pd.DataFrame = None) -> List[TaxInvoice]:
         """세금계산서 데이터 로드"""
-        df = ExcelService.read_excel_with_validation(file_path)
+        # 캐싱된 데이터가 있으면 사용
+        if cached_df is not None:
+            df = cached_df
+        else:
+            df = ExcelService.read_excel_with_validation(file_path)
 
         # MultiIndex 컬럼 처리 (매입대사2.ipynb 참고)
         if isinstance(df.columns, pd.MultiIndex):

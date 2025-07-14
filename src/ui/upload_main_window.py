@@ -27,6 +27,7 @@ class FileUploadThread(QThread):
     progress = pyqtSignal(int, str)  # 진행률, 메시지
     finished = pyqtSignal(bool, str)  # 성공 여부, 메시지
     validation_result = pyqtSignal(bool, str)  # 검증 결과, 메시지
+    data_loaded = pyqtSignal(str, object)  # 파일 타입, 데이터
     
     def __init__(self, file_path, file_type):
         super().__init__()
@@ -37,20 +38,19 @@ class FileUploadThread(QThread):
         try:
             self.progress.emit(20, "파일 검증 중...")
             
-            # 파일 검증
-            is_valid, message = self.validate_file()
+            # 파일 검증 및 데이터 로드
+            is_valid, message, data = self.validate_and_load_file()
             self.validation_result.emit(is_valid, message)
             
             if not is_valid:
                 self.finished.emit(False, message)
                 return
                 
-            self.progress.emit(50, "파일 읽기 중...")
+            self.progress.emit(50, "파일 읽기 완료...")
             
-            # 파일 읽기 (실제 업로드 로직이 있다면 여기에)
-            # 시뮬레이션을 위한 딜레이
-            import time
-            time.sleep(0.5)
+            # 데이터를 메인 스레드로 전달
+            if data is not None:
+                self.data_loaded.emit(self.file_type, data)
             
             self.progress.emit(100, "업로드 완료!")
             self.finished.emit(True, "파일 업로드가 완료되었습니다.")
@@ -58,35 +58,49 @@ class FileUploadThread(QThread):
         except Exception as e:
             self.finished.emit(False, f"업로드 실패: {str(e)}")
             
-    def validate_file(self):
-        """파일 검증 로직"""
+    def validate_and_load_file(self):
+        """파일 검증 및 데이터 로드 (한 번만 읽기)"""
         try:
-            # Excel 파일 읽기 시도
+            # 파일 크기 확인
+            file_size = os.path.getsize(self.file_path) / 1024 / 1024  # MB
+            if file_size > 10:
+                print(f"큰 파일 처리 중: {file_size:.1f}MB")
+            
+            # Excel 파일 읽기 (한 번만!)
+            print(f"[INFO] '{self.file_path}' 읽는 중…")
             df = read_excel_data(self.file_path)
-            if len(df) > 5:
-                df = df.head(5)  # 검증용으로 5행만 확인
+            
+            if df.empty:
+                return False, "빈 파일입니다.", None
 
             # 파일 타입별 검증
             if self.file_type == "supplier_purchase":
                 # 협력사단품별매입 파일 검증
-                return True, "검증 완료"
+                required_cols = ['협력사코드', '협력사명']
+                if not all(col in df.columns for col in required_cols):
+                    return False, f"필수 컬럼이 없습니다: {required_cols}", None
+                return True, "검증 완료", df
+                
             elif self.file_type == "standard":
                 # 기준 파일 검증
-                return True, "검증 완료"
+                return True, "검증 완료", df
+                
             elif self.file_type == "tax_invoice":
                 # 매입세금계산서 파일 검증
-                return True, "검증 완료"
+                return True, "검증 완료", df
+                
             elif self.file_type == "payment_ledger":
                 # 지불보조장 파일 검증
-                return True, "검증 완료"
+                return True, "검증 완료", df
+                
             elif self.file_type == "tax_invoice_wis":
                 # 매입세금계산서(WIS) 파일 검증
-                return True, "검증 완료"
+                return True, "검증 완료", df
 
-            return True, "검증 완료"
+            return True, "검증 완료", df
 
         except Exception as e:
-            return False, f"파일 읽기 오류: {str(e)}"
+            return False, f"파일 읽기 오류: {str(e)}", None
 
 
 class DataLoadThread(QThread):
@@ -94,36 +108,54 @@ class DataLoadThread(QThread):
     progress = pyqtSignal(str)  # 메시지
     finished = pyqtSignal(bool, str)  # 성공 여부, 메시지
     
-    def __init__(self, data_manager, file_path, file_type):
+    def __init__(self, data_manager, file_path, file_type, cached_data=None):
         super().__init__()
         self.data_manager = data_manager
         self.file_path = file_path
         self.file_type = file_type
+        self.cached_data = cached_data  # 캐싱된 데이터
         
     def run(self):
         try:
+            # 캐싱된 데이터가 있으면 사용, 없으면 다시 읽기
+            if self.cached_data is not None:
+                df = self.cached_data
+                self.progress.emit("캐싱된 데이터 사용")
+            else:
+                # 캐시에서 확인
+                df = self.data_manager.get_cached_data(self.file_path)
+                if df is None:
+                    # 캐시에 없으면 파일 읽기
+                    print(f"[INFO] 캐시 미스 - '{self.file_path}' 다시 읽는 중…")
+                    df = read_excel_data(self.file_path)
+                    self.data_manager.cache_file_data(self.file_path, df)
+                else:
+                    self.progress.emit("캐시에서 데이터 로드")
+            
+            # 파일 타입별 데이터 처리
             if self.file_type == 'supplier_purchase':
-                # 협력사단품별매입 데이터 로드 - ExcelService의 메서드를 확인해야 함
-                # 일단 빈 리스트로 처리
-                self.progress.emit("협력사단품별매입 데이터 로드 완료")
+                # 협력사단품별매입 데이터 로드
+                self.data_manager.load_purchases_from_df(df)
+                self.data_manager.load_suppliers_from_df(df)
+                self.progress.emit(f"협력사단품별매입 데이터 로드 완료 - {len(df)}행")
                 
             elif self.file_type == 'standard':
                 # 기준 데이터 로드
-                self.progress.emit("기준 데이터 로드 완료")
+                self.progress.emit(f"기준 데이터 로드 완료 - {len(df)}행")
                 
             elif self.file_type == 'tax_invoice':
                 # 세금계산서 데이터 로드
-                tax_invoices = ExcelService.load_tax_invoices(self.file_path)
+                tax_invoices = ExcelService.load_tax_invoices(self.file_path, df)
                 self.data_manager.tax_invoices.extend(tax_invoices)
                 self.progress.emit(f"{len(tax_invoices)}개 세금계산서 로드 완료")
                 
             elif self.file_type == 'payment_ledger':
                 # 지불보조장 데이터 로드
-                self.progress.emit("지불보조장 데이터 로드 완료")
+                self.progress.emit(f"지불보조장 데이터 로드 완료 - {len(df)}행")
                 
             elif self.file_type == 'tax_invoice_wis':
                 # 세금계산서(WIS) 데이터 로드
-                self.progress.emit("세금계산서(WIS) 데이터 로드 완료")
+                self.progress.emit(f"세금계산서(WIS) 데이터 로드 완료 - {len(df)}행")
                 
             self.finished.emit(True, "데이터 로드 완료")
             
@@ -167,7 +199,7 @@ class ReconciliationThread(QThread):
 
 class FileUploadWidget(QWidget):
     """파일 업로드를 위한 커스텀 위젯"""
-    fileUploaded = pyqtSignal(str, str)  # 파일 경로, 파일 타입
+    fileUploaded = pyqtSignal(str, str, object)  # 파일 경로, 파일 타입, 데이터
 
     def __init__(self, file_type: str, file_description: str):
         super().__init__()
@@ -176,6 +208,7 @@ class FileUploadWidget(QWidget):
         self.file_path = None
         self.upload_thread = None
         self.is_uploading = False
+        self.loaded_data = None  # 로드된 데이터 저장
         self.init_ui()
 
     def init_ui(self):
@@ -281,6 +314,7 @@ class FileUploadWidget(QWidget):
         self.upload_thread = FileUploadThread(file_path, self.file_type)
         self.upload_thread.progress.connect(self.update_progress)
         self.upload_thread.validation_result.connect(self.on_validation_result)
+        self.upload_thread.data_loaded.connect(self.on_data_loaded)  # 데이터 로드 시그널 연결
         self.upload_thread.finished.connect(self.on_upload_finished)
         self.upload_thread.start()
         
@@ -291,6 +325,10 @@ class FileUploadWidget(QWidget):
         self.progress_bar.setValue(value)
         self.status_label.setText(f"🔄 {message}")
 
+    def on_data_loaded(self, file_type: str, data):
+        """데이터 로드 완료 처리"""
+        self.loaded_data = data
+        
     def on_validation_result(self, is_valid: bool, message: str):
         """검증 결과 처리"""
         if is_valid:
@@ -309,7 +347,8 @@ class FileUploadWidget(QWidget):
             self.status_label.setText("✅ 확인")
             self.status_label.setStyleSheet("color: green; font-weight: bold;")
             self.drop_area.setText(f"✅ {os.path.basename(self.file_path)}")
-            self.fileUploaded.emit(self.file_path, self.file_type)
+            # 데이터와 함께 시그널 발생
+            self.fileUploaded.emit(self.file_path, self.file_type, self.loaded_data)
         else:
             self.status_label.setText("❌ 실패")
             self.status_label.setStyleSheet("color: red; font-weight: bold;")
@@ -516,10 +555,15 @@ class UploadMainWindow(QMainWindow):
 
         self.add_log("🚀 시스템 준비 완료. 파일을 업로드해주세요.")
 
-    def on_file_uploaded(self, file_path: str, file_type: str):
+    def on_file_uploaded(self, file_path: str, file_type: str, data=None):
         """파일 업로드 완료 처리"""
         self.uploaded_files[file_type] = file_path
         self.add_log(f"📁 {file_type} 파일 업로드 완료: {os.path.basename(file_path)}")
+        
+        # 데이터가 있으면 캐싱
+        if data is not None:
+            self.data_manager.cache_file_data(file_path, data)
+            self.add_log(f"  - 데이터 캐싱 완료 ({len(data)}행)")
 
         # 백그라운드에서 데이터 로드
         if file_type in self.data_load_threads and self.data_load_threads[file_type].isRunning():
@@ -528,7 +572,8 @@ class UploadMainWindow(QMainWindow):
             
         self.add_log(f"🔄 {file_type} 데이터 로드 중...")
         
-        load_thread = DataLoadThread(self.data_manager, file_path, file_type)
+        # 캐싱된 데이터와 함께 DataLoadThread 생성
+        load_thread = DataLoadThread(self.data_manager, file_path, file_type, data)
         load_thread.progress.connect(lambda msg: self.add_log(f"  - {msg}"))
         load_thread.finished.connect(lambda success, msg: self.on_data_loaded(file_type, success, msg))
         load_thread.start()

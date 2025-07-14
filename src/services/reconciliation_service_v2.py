@@ -289,6 +289,24 @@ class ReconciliationService:
         except Exception as e:
             raise Exception(f"데이터 전처리 실패: {str(e)}")
     
+    def _safe_remove_tz(self, s: pd.Series) -> pd.Series:
+        """
+        개별 Timestamp 단위로 timezone을 제거한다.
+        tz-aware → tz-naive로 변환, NaT/naive 값은 그대로 둔다.
+        
+        Args:
+            s: pandas Series (datetime 타입)
+        
+        Returns:
+            timezone이 제거된 pandas Series
+        """
+        def remove_tz_element(x):
+            if isinstance(x, pd.Timestamp) and x.tzinfo is not None:
+                return x.tz_localize(None)
+            return x
+        
+        return s.apply(remove_tz_element)
+    
     def _process_tax_invoices(self):
         """세금계산서 데이터 처리 - 노트북 로직"""
         try:
@@ -305,8 +323,8 @@ class ReconciliationService:
             if missing_cols:
                 raise ValueError(f"매입세금계산서(WIS)에 필수 컬럼이 없습니다: {', '.join(missing_cols)}")
             
-            # df_num에서 필요한 컬럼만 추출
-            self.df_tax = self.df_num[required_cols]
+            # df_num에서 필요한 컬럼만 추출 (명시적 복사로 SettingWithCopyWarning 방지)
+            self.df_tax = self.df_num[required_cols].copy()
             
             # 타입 변환
             try:
@@ -369,12 +387,21 @@ class ReconciliationService:
                 self.df_tax_new['국세청발급일'] = None
                 self.df_tax_new['업체사업자번호'] = self.df_tax_new['사업자번호']
             
-            # 날짜 변환
+            # 날짜 변환 및 안전한 timezone 제거
             try:
                 self.df_tax_new['국세청작성일'] = pd.to_datetime(self.df_tax_new['국세청작성일'], errors='coerce')
                 self.df_tax_new['국세청발급일'] = pd.to_datetime(self.df_tax_new['국세청발급일'], errors='coerce')
+                
+                # 개별 Timestamp 단위로 안전하게 timezone 제거
+                for col in ['국세청작성일', '국세청발급일']:
+                    if col in self.df_tax_new.columns:
+                        self.df_tax_new[col] = self._safe_remove_tz(self.df_tax_new[col])
+                        
             except Exception as e:
                 print(f"⚠️ 날짜 변환 경고: {str(e)}")
+                # 실패 시 None으로 초기화
+                self.df_tax_new['국세청작성일'] = None
+                self.df_tax_new['국세청발급일'] = None
             
             # 업체사업자번호 정리
             self.df_tax_new["업체사업자번호"] = self.df_tax_new["업체사업자번호"].astype(str).str.replace("-", "", regex=True)
@@ -391,16 +418,46 @@ class ReconciliationService:
             if self.df_final_pivot is None or len(self.df_final_pivot) == 0:
                 raise ValueError("피벗 데이터가 없습니다")
             
-            # 작성년도, 작성월 추출
+            # 작성년도, 작성월 추출 - 안전한 datetime 접근
             try:
-                self.df_tax_new['작성년도'] = self.df_tax_new['국세청작성일'].dt.year
-                self.df_tax_new['작성월'] = self.df_tax_new['국세청작성일'].dt.month
+                # 국세청작성일이 유효한지 확인
+                if ('국세청작성일' in self.df_tax_new.columns and 
+                    not self.df_tax_new['국세청작성일'].isna().all()):
+                    
+                    # datetime 타입 확인 및 안전한 접근
+                    date_series = self.df_tax_new['국세청작성일']
+                    if hasattr(date_series, 'dt'):
+                        self.df_tax_new['작성년도'] = date_series.dt.year
+                        self.df_tax_new['작성월'] = date_series.dt.month
+                    else:
+                        raise ValueError("국세청작성일이 datetime 타입이 아님")
+                else:
+                    raise ValueError("국세청작성일 데이터가 없거나 모두 None")
+                    
             except Exception as e:
-                # 국세청작성일이 없는 경우 계산서작성일 사용
+                # 국세청작성일이 없거나 사용 불가한 경우 계산서작성일 사용
                 print(f"⚠️ 국세청작성일 사용 불가, 계산서작성일 사용: {str(e)}")
-                self.df_tax_new['계산서작성일'] = pd.to_datetime(self.df_tax_new['계산서작성일'], errors='coerce')
-                self.df_tax_new['작성년도'] = self.df_tax_new['계산서작성일'].dt.year
-                self.df_tax_new['작성월'] = self.df_tax_new['계산서작성일'].dt.month
+                try:
+                    self.df_tax_new['계산서작성일'] = pd.to_datetime(self.df_tax_new['계산서작성일'], errors='coerce')
+                    # 계산서작성일도 안전하게 접근
+                    date_series = self.df_tax_new['계산서작성일']
+                    if hasattr(date_series, 'dt'):
+                        self.df_tax_new['작성년도'] = date_series.dt.year
+                        self.df_tax_new['작성월'] = date_series.dt.month
+                    else:
+                        # 최후의 수단: 현재 년월 사용
+                        print("⚠️ 계산서작성일도 사용 불가, 현재 년월 사용")
+                        from datetime import datetime
+                        now = datetime.now()
+                        self.df_tax_new['작성년도'] = now.year
+                        self.df_tax_new['작성월'] = now.month
+                except Exception as fallback_error:
+                    print(f"⚠️ 계산서작성일 처리 실패: {str(fallback_error)}")
+                    # 최후의 수단: 현재 년월 사용
+                    from datetime import datetime
+                    now = datetime.now()
+                    self.df_tax_new['작성년도'] = now.year
+                    self.df_tax_new['작성월'] = now.month
             
             # 공급가액, 세액 숫자 변환
             try:
@@ -816,6 +873,8 @@ class ReconciliationService:
     
     def _process_payment_book(self):
         """지불보조장 대사"""
+        print("DEBUG: _process_payment_book() 시작")
+        
         # 거래처번호 변환
         def convert_vendor_to_string(val):
             if pd.isna(val):
@@ -828,6 +887,8 @@ class ReconciliationService:
         self.df_book['거래처번호'] = self.df_book['거래처번호'].apply(convert_vendor_to_string)
         
         # 필터링
+        print(f"DEBUG: df_book 행 수: {len(self.df_book)}")
+        print(f"DEBUG: df_final_pivot의 업체사업자번호 개수: {len(self.df_final_pivot['업체사업자번호'].unique())}")
         self.filtered_df_book = self.df_book[
             self.df_book['거래처번호'].isin(self.df_final_pivot['업체사업자번호'])
         ]
@@ -848,9 +909,16 @@ class ReconciliationService:
         
         # 지불예상금액 계산
         # NaN 값을 0으로 채우고 계산
+        print("DEBUG: 지불예상금액 계산 시작")
+        print(f"DEBUG: 국세청공급가액 컬럼 존재: {'국세청공급가액' in self.df_final_pivot.columns}")
+        print(f"DEBUG: 국세청세액 컬럼 존재: {'국세청세액' in self.df_final_pivot.columns}")
+        
         self.df_final_pivot["국세청공급가액"] = self.df_final_pivot["국세청공급가액"].fillna(0)
         self.df_final_pivot["국세청세액"] = self.df_final_pivot["국세청세액"].fillna(0)
         self.df_final_pivot["지불예상금액"] = self.df_final_pivot["국세청공급가액"] + self.df_final_pivot["국세청세액"]
+        
+        print("DEBUG: 지불예상금액 계산 완료")
+        print(f"DEBUG: 지불예상금액 컬럼 생성됨: {'지불예상금액' in self.df_final_pivot.columns}")
     
     def _process_payment_book_matching(self, tolerance=1e-6):
         """
@@ -962,6 +1030,10 @@ class ReconciliationService:
     
     def _create_final_results(self):
         """최종 결과 생성"""
+        # 디버깅 정보 출력
+        print(f"DEBUG: df_final_pivot columns: {list(self.df_final_pivot.columns)}")
+        print(f"DEBUG: '지불예상금액' in columns: {'지불예상금액' in self.df_final_pivot.columns}")
+        
         # 최종지불금액 계산
         self.df_final_pivot['최종지불금액'] = self.df_final_pivot['최종매입금액']
         
@@ -971,6 +1043,13 @@ class ReconciliationService:
         
         # 정렬
         self.df_final_pivot = self.df_final_pivot.sort_values(by=["업체사업자번호", "협력사코드", "년월"], ascending=True)
+        
+        # 지불예상금액이 없다면 여기서 생성
+        if '지불예상금액' not in self.df_final_pivot.columns:
+            print("WARNING: '지불예상금액' 컬럼이 없어서 생성합니다.")
+            self.df_final_pivot["국세청공급가액"] = self.df_final_pivot.get("국세청공급가액", 0).fillna(0)
+            self.df_final_pivot["국세청세액"] = self.df_final_pivot.get("국세청세액", 0).fillna(0)
+            self.df_final_pivot["지불예상금액"] = self.df_final_pivot["국세청공급가액"] + self.df_final_pivot["국세청세액"]
         
         # 최종 DataFrame
         self.final_merged_df = self.df_final_pivot[[
@@ -1043,10 +1122,14 @@ class ReconciliationService:
                 if pd.isnull(val):
                     val = ""
                 elif isinstance(val, pd.Timestamp):
-                    if val.tzinfo is None:
-                        val = val.tz_localize("UTC").to_pydatetime()
-                    else:
+                    try:
+                        # timezone 정보가 있는 경우 안전하게 제거
+                        if val.tzinfo is not None:
+                            val = val.tz_localize(None)
                         val = val.to_pydatetime()
+                    except Exception:
+                        # 오류 발생 시 문자열로 변환
+                        val = str(val)
                 sheet.Cells(start_row + row_idx + 1, col_idx + start_col).Value = val
         
         # 스타일 적용
