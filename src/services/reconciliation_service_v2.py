@@ -39,42 +39,97 @@ class ReconciliationService:
         
     def load_all_data(self, file_paths: Dict[str, str]):
         """모든 Excel 파일 로드"""
+        errors = []
+        loaded_files = []
+        
+        # 필수 파일 체크
+        required_files = ['standard', 'purchase_detail', 'tax_invoice', 'payment_ledger', 'tax_invoice_wis']
+        missing_files = [f for f in required_files if f not in file_paths or not file_paths[f]]
+        
+        if missing_files:
+            raise ValueError(f"필수 파일이 누락되었습니다: {', '.join(missing_files)}")
+        
         try:
             # 1. 기준 데이터 로드
             if 'standard' in file_paths:
-                self.df_standard = read_excel_data(file_paths['standard'])
-                print(f"기준 데이터 로드: {len(self.df_standard)}건")
+                try:
+                    self.df_standard = read_excel_data(file_paths['standard'])
+                    if self.df_standard is None or len(self.df_standard) == 0:
+                        raise ValueError("기준 데이터가 비어있습니다")
+                    print(f"기준 데이터 로드: {len(self.df_standard)}건")
+                    loaded_files.append('standard')
+                except Exception as e:
+                    errors.append(f"기준 파일 로드 오류: {str(e)}")
+                    raise
             
             # 2. 협력사단품별매입 로드
             if 'purchase_detail' in file_paths:
-                self.df = read_excel_data(file_paths['purchase_detail'], header=0)
-                # Grand Total 행 제거 (노트북 로직)
-                if len(self.df) > 0:
-                    self.df = self.df.drop(0).reset_index(drop=True)
-                print(f"협력사단품별매입 로드: {len(self.df)}건")
+                try:
+                    self.df = read_excel_data(file_paths['purchase_detail'], header=0)
+                    # Grand Total 행 제거 (노트북 로직)
+                    if len(self.df) > 0:
+                        self.df = self.df.drop(0).reset_index(drop=True)
+                    if self.df is None or len(self.df) == 0:
+                        raise ValueError("협력사단품별매입 데이터가 비어있습니다")
+                    print(f"협력사단품별매입 로드: {len(self.df)}건")
+                    loaded_files.append('purchase_detail')
+                except Exception as e:
+                    errors.append(f"협력사단품별매입 파일 로드 오류: {str(e)}")
+                    raise
             
             # 3. 매입세금계산서 로드
             if 'tax_invoice' in file_paths:
-                self.df_tax_hifi = read_excel_data(file_paths['tax_invoice'], header=[0,1])
-                print(f"매입세금계산서 로드: {len(self.df_tax_hifi)}건")
+                try:
+                    self.df_tax_hifi = read_excel_data(file_paths['tax_invoice'], header=[0,1])
+                    if self.df_tax_hifi is None or len(self.df_tax_hifi) == 0:
+                        raise ValueError("매입세금계산서 데이터가 비어있습니다")
+                    print(f"매입세금계산서 로드: {len(self.df_tax_hifi)}건")
+                    loaded_files.append('tax_invoice')
+                except Exception as e:
+                    errors.append(f"매입세금계산서 파일 로드 오류: {str(e)}")
+                    raise
             
             # 4. 지불보조장 로드
-            if 'payment_book' in file_paths:
-                self.df_book = read_excel_data(file_paths['payment_book'])
-                print(f"지불보조장 로드: {len(self.df_book)}건")
+            if 'payment_ledger' in file_paths:
+                try:
+                    self.df_book = read_excel_data(file_paths['payment_ledger'])
+                    if self.df_book is None or len(self.df_book) == 0:
+                        raise ValueError("지불보조장 데이터가 비어있습니다")
+                    print(f"지불보조장 로드: {len(self.df_book)}건")
+                    loaded_files.append('payment_ledger')
+                except Exception as e:
+                    errors.append(f"지불보조장 파일 로드 오류: {str(e)}")
+                    raise
             
             # 5. 매입세금계산서(WIS) 로드
             if 'tax_invoice_wis' in file_paths:
-                self.df_num = read_excel_data(file_paths['tax_invoice_wis'])
-                print(f"매입세금계산서(WIS) 로드: {len(self.df_num)}건")
+                try:
+                    self.df_num = read_excel_data(file_paths['tax_invoice_wis'])
+                    if self.df_num is None or len(self.df_num) == 0:
+                        raise ValueError("매입세금계산서(WIS) 데이터가 비어있습니다")
+                    print(f"매입세금계산서(WIS) 로드: {len(self.df_num)}건")
+                    loaded_files.append('tax_invoice_wis')
+                except Exception as e:
+                    errors.append(f"매입세금계산서(WIS) 파일 로드 오류: {str(e)}")
+                    raise
             
             # 6. 임가공비 로드 (선택사항)
             if 'processing_fee' in file_paths and file_paths['processing_fee']:
-                self.df_processing = read_excel_data(file_paths['processing_fee'])
-                print(f"임가공비 로드: {len(self.df_processing)}건")
+                try:
+                    self.df_processing = read_excel_data(file_paths['processing_fee'])
+                    print(f"임가공비 로드: {len(self.df_processing)}건")
+                    loaded_files.append('processing_fee')
+                except Exception as e:
+                    print(f"임가공비 파일 로드 경고: {str(e)} (선택 파일이므로 계속 진행)")
+                    
+            print(f"\n✅ 파일 로드 완료: {len(loaded_files)}개 파일")
                 
         except Exception as e:
-            raise Exception(f"데이터 로드 실패: {str(e)}")
+            if errors:
+                error_msg = "데이터 로드 중 오류 발생:\n" + "\n".join(errors)
+            else:
+                error_msg = f"데이터 로드 실패: {str(e)}"
+            raise Exception(error_msg)
     
     def process_reconciliation(self, start_date: datetime, end_date: datetime) -> Dict:
         """매입대사 처리 - 노트북 로직 그대로 구현"""
@@ -84,177 +139,345 @@ class ReconciliationService:
                 'end': end_date.strftime('%Y-%m-%d')
             },
             'summary': {},
-            'output_path': None
+            'output_path': None,
+            'errors': [],
+            'warnings': []
         }
         
         try:
+            # 0. 날짜 유효성 검증
+            if start_date > end_date:
+                raise ValueError(f"시작일({start_date})이 종료일({end_date})보다 늦습니다")
+            
             # 1. 데이터 전처리 및 피벗
-            self._preprocess_and_pivot()
+            print("📊 데이터 전처리 시작...")
+            try:
+                self._preprocess_and_pivot()
+                print(f"✅ 피벗 데이터 생성 완료: {len(self.df_final_pivot)}건")
+            except Exception as e:
+                raise Exception(f"데이터 전처리 실패: {str(e)}")
             
             # 2. 세금계산서 데이터 처리
-            self._process_tax_invoices()
+            print("📄 세금계산서 데이터 처리 시작...")
+            try:
+                self._process_tax_invoices()
+                print(f"✅ 세금계산서 처리 완료: {len(self.df_tax_new)}건")
+            except Exception as e:
+                raise Exception(f"세금계산서 처리 실패: {str(e)}")
             
             # 3. 대사 처리 (노트북의 복잡한 로직)
-            self._process_matching()
+            print("🔄 대사 처리 시작...")
+            try:
+                self._process_matching()
+                print("✅ 대사 처리 완료")
+            except Exception as e:
+                raise Exception(f"대사 처리 실패: {str(e)}")
             
             # 4. 지불보조장 대사
-            self._process_payment_book()
+            print("💳 지불보조장 대사 시작...")
+            try:
+                self._process_payment_book()
+                if hasattr(self, 'filtered_df_book'):
+                    print(f"✅ 지불보조장 대사 완료: {len(self.filtered_df_book)}건")
+            except Exception as e:
+                results['warnings'].append(f"지불보조장 대사 경고: {str(e)}")
+                print(f"⚠️ 지불보조장 대사 경고: {str(e)}")
             
             # 5. 최종 결과 생성
-            self._create_final_results()
+            print("📝 최종 결과 생성...")
+            try:
+                self._create_final_results()
+                print("✅ 최종 결과 생성 완료")
+            except Exception as e:
+                raise Exception(f"최종 결과 생성 실패: {str(e)}")
             
             # 6. Excel 파일 생성
-            output_path = self._save_to_excel()
-            results['output_path'] = output_path
+            print("💾 Excel 파일 생성...")
+            try:
+                output_path = self._save_to_excel()
+                results['output_path'] = output_path
+                print(f"✅ Excel 파일 생성 완료: {output_path}")
+            except Exception as e:
+                raise Exception(f"Excel 파일 생성 실패: {str(e)}")
             
             # 7. 요약 정보 생성
-            results['summary'] = self._create_summary()
+            try:
+                results['summary'] = self._create_summary()
+                
+                # 검증 결과 확인
+                validation = results['summary'].get('validation', {})
+                if validation.get('errors'):
+                    results['errors'].extend(validation['errors'])
+                if validation.get('warnings'):
+                    results['warnings'].extend(validation['warnings'])
+                    
+            except Exception as e:
+                results['warnings'].append(f"요약 정보 생성 경고: {str(e)}")
             
             return results
             
         except Exception as e:
+            results['errors'].append(str(e))
+            results['summary'] = {'status': 'failed', 'error': str(e)}
             raise Exception(f"대사 처리 실패: {str(e)}")
     
     def _preprocess_and_pivot(self):
         """데이터 전처리 및 피벗 - 노트북 로직"""
-        # 그룹화하여 최종매입금액 합계
-        self.df_pivot = self.df.groupby(["년월", "협력사코드", "단품코드", "면과세구분명"]).agg({
-            "최종매입금액": "sum",
-            "협력사명": "first",
-            "단품명": "first"
-        }).reset_index()
-        
-        # 컬럼 순서 조정
-        self.df_pivot = self.df_pivot[["년월", "협력사코드", "협력사명", "단품코드", "단품명", "면과세구분명", "최종매입금액"]]
-        
-        # 기준 데이터와 조인
-        df_standard_subset = self.df_standard[['협력사코드', '단품코드']].drop_duplicates(subset=['협력사코드', '단품코드'])
-        
-        # 타입 변환
-        self.df_pivot['협력사코드'] = self.df_pivot['협력사코드'].astype(int).astype(str)
-        df_standard_subset['협력사코드'] = df_standard_subset['협력사코드'].astype(int).astype(str)
-        self.df_pivot['단품코드'] = self.df_pivot['단품코드'].astype(int).astype(str)
-        df_standard_subset['단품코드'] = df_standard_subset['단품코드'].astype(int).astype(str)
-        
-        # Inner join
-        df_final = pd.merge(self.df_pivot, df_standard_subset, on=['협력사코드', '단품코드'], how='inner')
-        
-        # 협력사별 집계
-        self.df_final_pivot = df_final.groupby(["년월", "협력사코드", "면과세구분명"]).agg({
-            "협력사명": "first",
-            "최종매입금액": "sum"
-        }).reset_index()
-        
-        self.df_final_pivot = self.df_final_pivot[["년월", "협력사코드", "협력사명", "면과세구분명", "최종매입금액"]]
-        
-        # 정렬 및 key 생성
-        self.df_final_pivot = self.df_final_pivot.sort_values(by=["협력사코드", "년월", "면과세구분명"])
-        self.df_final_pivot["key"] = (
-            self.df_final_pivot["년월"].astype(int).astype(str) + 
-            self.df_final_pivot["협력사코드"].astype(str) + 
-            self.df_final_pivot["면과세구분명"]
-        )
-        
-        # 0원 제외
-        self.df_final_pivot = self.df_final_pivot[self.df_final_pivot.최종매입금액 != 0]
+        try:
+            # 필수 데이터 확인
+            if self.df is None or len(self.df) == 0:
+                raise ValueError("협력사단품별매입 데이터가 없습니다")
+            if self.df_standard is None or len(self.df_standard) == 0:
+                raise ValueError("기준 데이터가 없습니다")
+                
+            # 필수 컬럼 확인
+            required_cols = ["년월", "협력사코드", "단품코드", "면과세구분명", "최종매입금액", "협력사명", "단품명"]
+            missing_cols = [col for col in required_cols if col not in self.df.columns]
+            if missing_cols:
+                raise ValueError(f"협력사단품별매입 파일에 필수 컬럼이 없습니다: {', '.join(missing_cols)}")
+            
+            # 그룹화하여 최종매입금액 합계
+            self.df_pivot = self.df.groupby(["년월", "협력사코드", "단품코드", "면과세구분명"]).agg({
+                "최종매입금액": "sum",
+                "협력사명": "first",
+                "단품명": "first"
+            }).reset_index()
+            
+            # 컬럼 순서 조정
+            self.df_pivot = self.df_pivot[["년월", "협력사코드", "협력사명", "단품코드", "단품명", "면과세구분명", "최종매입금액"]]
+            
+            # 기준 데이터와 조인
+            df_standard_subset = self.df_standard[['협력사코드', '단품코드']].drop_duplicates(subset=['협력사코드', '단품코드'])
+            
+            # 타입 변환
+            try:
+                self.df_pivot['협력사코드'] = self.df_pivot['협력사코드'].astype(int).astype(str)
+                df_standard_subset['협력사코드'] = df_standard_subset['협력사코드'].astype(int).astype(str)
+                self.df_pivot['단품코드'] = self.df_pivot['단품코드'].astype(int).astype(str)
+                df_standard_subset['단품코드'] = df_standard_subset['단품코드'].astype(int).astype(str)
+            except Exception as e:
+                raise ValueError(f"협력사코드/단품코드 타입 변환 실패: {str(e)}")
+            
+            # Inner join
+            df_final = pd.merge(self.df_pivot, df_standard_subset, on=['협력사코드', '단품코드'], how='inner')
+            
+            if len(df_final) == 0:
+                raise ValueError("기준 데이터와 매칭되는 데이터가 없습니다")
+            
+            # 협력사별 집계
+            self.df_final_pivot = df_final.groupby(["년월", "협력사코드", "면과세구분명"]).agg({
+                "협력사명": "first",
+                "최종매입금액": "sum"
+            }).reset_index()
+            
+            self.df_final_pivot = self.df_final_pivot[["년월", "협력사코드", "협력사명", "면과세구분명", "최종매입금액"]]
+            
+            # 정렬 및 key 생성
+            self.df_final_pivot = self.df_final_pivot.sort_values(by=["협력사코드", "년월", "면과세구분명"])
+            self.df_final_pivot["key"] = (
+                self.df_final_pivot["년월"].astype(int).astype(str) + 
+                self.df_final_pivot["협력사코드"].astype(str) + 
+                self.df_final_pivot["면과세구분명"]
+            )
+            
+            # 0원 제외
+            self.df_final_pivot = self.df_final_pivot[self.df_final_pivot.최종매입금액 != 0]
+            
+            if len(self.df_final_pivot) == 0:
+                raise ValueError("처리할 데이터가 없습니다 (모든 금액이 0원)")
+                
+        except Exception as e:
+            raise Exception(f"데이터 전처리 실패: {str(e)}")
     
     def _process_tax_invoices(self):
         """세금계산서 데이터 처리 - 노트북 로직"""
-        # df_num에서 필요한 컬럼만 추출
-        self.df_tax = self.df_num[[
-            "협력사코드", "계산서작성일", "협력사명", "계산서구분", 
-            "사업자번호", "공급가액", "세액", "국세청승인번호"
-        ]]
-        
-        # 타입 변환
-        self.df_final_pivot['협력사코드'] = self.df_final_pivot['협력사코드'].astype(str)
-        self.df_tax['협력사코드'] = self.df_tax['협력사코드'].astype(str)
-        
-        # 필터링
-        self.df_tax_sort = self.df_tax[self.df_tax.협력사코드.isin(self.df_final_pivot.협력사코드.tolist())]
-        
-        # df_tax_hifi 처리 (MultiIndex 헤더)
-        self.df_tax_hifi.columns = [col[0] if pd.isna(col[1]) else f"{col[0]}_{col[1]}" for col in self.df_tax_hifi.columns]
-        
-        # 컬럼 매핑
-        column_mapping = {
-            '국세청승인번호': '국세청승인번호',
-            '업체사업자번호': '업체사업자번호',
-            '국세청작성일': 'nan_작성일',
-            '국세청발급일': 'nan_발급일'
-        }
-        
-        # lookup_df 생성
-        lookup_df = self.df_tax_hifi[[
-            column_mapping['국세청승인번호'],
-            column_mapping['업체사업자번호'],
-            column_mapping['국세청작성일'],
-            column_mapping['국세청발급일']
-        ]].drop_duplicates(subset=column_mapping['국세청승인번호'], keep='first')
-        
-        lookup_df = lookup_df.rename(columns={
-            column_mapping['국세청승인번호']: '국세청승인번호',
-            column_mapping['업체사업자번호']: '업체사업자번호',
-            column_mapping['국세청작성일']: '국세청작성일',
-            column_mapping['국세청발급일']: '국세청발급일'
-        })
-        
-        # 병합
-        self.df_tax_new = pd.merge(self.df_tax_sort, lookup_df, on='국세청승인번호', how='left')
-        
-        # 날짜 변환
-        self.df_tax_new['국세청작성일'] = pd.to_datetime(self.df_tax_new['국세청작성일'], errors='coerce')
-        self.df_tax_new['국세청발급일'] = pd.to_datetime(self.df_tax_new['국세청발급일'], errors='coerce')
-        
-        # 업체사업자번호 정리
-        self.df_tax_new["업체사업자번호"] = self.df_tax_new["업체사업자번호"].astype(str).str.replace("-", "", regex=True)
+        try:
+            # 필수 데이터 확인
+            if self.df_num is None or len(self.df_num) == 0:
+                raise ValueError("매입세금계산서(WIS) 데이터가 없습니다")
+            if self.df_tax_hifi is None or len(self.df_tax_hifi) == 0:
+                raise ValueError("매입세금계산서 데이터가 없습니다")
+                
+            # df_num에서 필요한 컬럼 확인
+            required_cols = ["협력사코드", "계산서작성일", "협력사명", "계산서구분", 
+                           "사업자번호", "공급가액", "세액", "국세청승인번호"]
+            missing_cols = [col for col in required_cols if col not in self.df_num.columns]
+            if missing_cols:
+                raise ValueError(f"매입세금계산서(WIS)에 필수 컬럼이 없습니다: {', '.join(missing_cols)}")
+            
+            # df_num에서 필요한 컬럼만 추출
+            self.df_tax = self.df_num[required_cols]
+            
+            # 타입 변환
+            try:
+                self.df_final_pivot['협력사코드'] = self.df_final_pivot['협력사코드'].astype(str)
+                self.df_tax['협력사코드'] = self.df_tax['협력사코드'].astype(str)
+            except Exception as e:
+                raise ValueError(f"협력사코드 타입 변환 실패: {str(e)}")
+            
+            # 필터링
+            self.df_tax_sort = self.df_tax[self.df_tax.협력사코드.isin(self.df_final_pivot.협력사코드.tolist())]
+            
+            if len(self.df_tax_sort) == 0:
+                raise ValueError("매칭되는 세금계산서가 없습니다")
+            
+            # df_tax_hifi 처리 (MultiIndex 헤더)
+            try:
+                self.df_tax_hifi.columns = [col[0] if pd.isna(col[1]) else f"{col[0]}_{col[1]}" for col in self.df_tax_hifi.columns]
+            except Exception as e:
+                raise ValueError(f"매입세금계산서 헤더 처리 실패: {str(e)}")
+            
+            # 컬럼 매핑
+            column_mapping = {
+                '국세청승인번호': '국세청승인번호',
+                '업체사업자번호': '업체사업자번호',
+                '국세청작성일': 'nan_작성일',
+                '국세청발급일': 'nan_발급일'
+            }
+            
+            # lookup_df 생성
+            try:
+                lookup_df = self.df_tax_hifi[[
+                    column_mapping['국세청승인번호'],
+                    column_mapping['업체사업자번호'],
+                    column_mapping['국세청작성일'],
+                    column_mapping['국세청발급일']
+                ]].drop_duplicates(subset=column_mapping['국세청승인번호'], keep='first')
+                
+                lookup_df = lookup_df.rename(columns={
+                    column_mapping['국세청승인번호']: '국세청승인번호',
+                    column_mapping['업체사업자번호']: '업체사업자번호',
+                    column_mapping['국세청작성일']: '국세청작성일',
+                    column_mapping['국세청발급일']: '국세청발급일'
+                })
+            except KeyError as e:
+                # 컬럼명이 다를 수 있으므로 대체 시도
+                print(f"⚠️ 컬럼 매핑 경고: {str(e)}")
+                # 컬럼명 확인 후 재시도
+                available_cols = list(self.df_tax_hifi.columns)
+                print(f"사용 가능한 컬럼: {available_cols[:10]}...")  # 처음 10개만 표시
+                
+                # 대체 매핑 시도
+                lookup_df = pd.DataFrame()  # 빈 DataFrame으로 초기화
+            
+            # 병합
+            if not lookup_df.empty:
+                self.df_tax_new = pd.merge(self.df_tax_sort, lookup_df, on='국세청승인번호', how='left')
+            else:
+                self.df_tax_new = self.df_tax_sort.copy()
+                self.df_tax_new['국세청작성일'] = None
+                self.df_tax_new['국세청발급일'] = None
+                self.df_tax_new['업체사업자번호'] = self.df_tax_new['사업자번호']
+            
+            # 날짜 변환
+            try:
+                self.df_tax_new['국세청작성일'] = pd.to_datetime(self.df_tax_new['국세청작성일'], errors='coerce')
+                self.df_tax_new['국세청발급일'] = pd.to_datetime(self.df_tax_new['국세청발급일'], errors='coerce')
+            except Exception as e:
+                print(f"⚠️ 날짜 변환 경고: {str(e)}")
+            
+            # 업체사업자번호 정리
+            self.df_tax_new["업체사업자번호"] = self.df_tax_new["업체사업자번호"].astype(str).str.replace("-", "", regex=True)
+            
+        except Exception as e:
+            raise Exception(f"세금계산서 데이터 처리 실패: {str(e)}")
     
     def _process_matching(self):
         """대사 처리 - 노트북의 복잡한 매칭 로직"""
-        # 노트북 코드의 대사 로직을 그대로 이식
-        # (코드가 너무 길어서 주요 부분만 표시)
-        
-        # 작성년도, 작성월 추출
-        self.df_tax_new['작성년도'] = self.df_tax_new['국세청작성일'].dt.year
-        self.df_tax_new['작성월'] = self.df_tax_new['국세청작성일'].dt.month
-        
-        # 공급가액, 세액 숫자 변환
-        self.df_tax_new["공급가액"] = pd.to_numeric(self.df_tax_new["공급가액"], errors="coerce")
-        self.df_tax_new["세액"] = pd.to_numeric(self.df_tax_new["세액"], errors="coerce")
-        
-        # 대사여부, 구분키 컬럼 추가
-        self.df_tax_new['대사여부'] = ""
-        self.df_tax_new['구분키'] = ""
-        
-        # df_final_pivot 처리
-        self.df_final_pivot['년'] = self.df_final_pivot['년월'].astype(str).str[:4].astype(int)
-        self.df_final_pivot['월'] = self.df_final_pivot['년월'].astype(str).str[4:6].astype(int)
-        
-        # 국세청 관련 컬럼 추가
-        self.df_final_pivot['국세청작성일'] = None
-        self.df_final_pivot['국세청발급일'] = None
-        self.df_final_pivot['국세청공급가액'] = None
-        self.df_final_pivot['국세청세액'] = None
-        self.df_final_pivot['구분키'] = ""
-        self.df_final_pivot['국세청승인번호'] = None
-        self.df_final_pivot['업체사업자번호'] = None
-        
-        tolerance = 1e-6
-        
-        # Step A: 금액대사 (1:1 대사)
-        self._process_exact_matching(tolerance)
-        
-        # Step A-2: 금액대사(수기확인)
-        self._process_exact_matching_manual(tolerance)
-        
-        # Step B: 순차대사 (1:N 대사)
-        self._process_sequential_matching(tolerance)
-        
-        # Step C: 부분대사
-        self._process_partial_matching(tolerance)
-        
-        # Step D: 부분대사(수기확인)
-        self._process_partial_matching_manual(tolerance)
+        try:
+            # 필수 데이터 확인
+            if self.df_tax_new is None or len(self.df_tax_new) == 0:
+                raise ValueError("세금계산서 데이터가 없습니다")
+            if self.df_final_pivot is None or len(self.df_final_pivot) == 0:
+                raise ValueError("피벗 데이터가 없습니다")
+            
+            # 작성년도, 작성월 추출
+            try:
+                self.df_tax_new['작성년도'] = self.df_tax_new['국세청작성일'].dt.year
+                self.df_tax_new['작성월'] = self.df_tax_new['국세청작성일'].dt.month
+            except Exception as e:
+                # 국세청작성일이 없는 경우 계산서작성일 사용
+                print(f"⚠️ 국세청작성일 사용 불가, 계산서작성일 사용: {str(e)}")
+                self.df_tax_new['계산서작성일'] = pd.to_datetime(self.df_tax_new['계산서작성일'], errors='coerce')
+                self.df_tax_new['작성년도'] = self.df_tax_new['계산서작성일'].dt.year
+                self.df_tax_new['작성월'] = self.df_tax_new['계산서작성일'].dt.month
+            
+            # 공급가액, 세액 숫자 변환
+            try:
+                self.df_tax_new["공급가액"] = pd.to_numeric(self.df_tax_new["공급가액"], errors="coerce")
+                self.df_tax_new["세액"] = pd.to_numeric(self.df_tax_new["세액"], errors="coerce")
+            except Exception as e:
+                raise ValueError(f"금액 변환 실패: {str(e)}")
+            
+            # 대사여부, 구분키 컬럼 추가
+            self.df_tax_new['대사여부'] = ""
+            self.df_tax_new['구분키'] = ""
+            
+            # df_final_pivot 처리
+            try:
+                self.df_final_pivot['년'] = self.df_final_pivot['년월'].astype(str).str[:4].astype(int)
+                self.df_final_pivot['월'] = self.df_final_pivot['년월'].astype(str).str[4:6].astype(int)
+            except Exception as e:
+                raise ValueError(f"년월 분리 실패: {str(e)}")
+            
+            # 국세청 관련 컬럼 추가
+            self.df_final_pivot['국세청작성일'] = None
+            self.df_final_pivot['국세청발급일'] = None
+            self.df_final_pivot['국세청공급가액'] = None
+            self.df_final_pivot['국세청세액'] = None
+            self.df_final_pivot['구분키'] = ""
+            self.df_final_pivot['국세청승인번호'] = None
+            self.df_final_pivot['업체사업자번호'] = None
+            
+            tolerance = 1e-6
+            
+            # Step A: 금액대사 (1:1 대사)
+            try:
+                self._process_exact_matching(tolerance)
+                matched_count = len(self.df_final_pivot[self.df_final_pivot['구분키'] == '금액대사'])
+                print(f"  - 금액대사 완료: {matched_count}건")
+            except Exception as e:
+                print(f"⚠️ 금액대사 경고: {str(e)}")
+            
+            # Step A-2: 금액대사(수기확인)
+            try:
+                self._process_exact_matching_manual(tolerance)
+                matched_count = len(self.df_final_pivot[self.df_final_pivot['구분키'] == '금액대사(수기확인)'])
+                print(f"  - 금액대사(수기확인) 완료: {matched_count}건")
+            except Exception as e:
+                print(f"⚠️ 금액대사(수기확인) 경고: {str(e)}")
+            
+            # Step B: 순차대사 (1:N 대사)
+            try:
+                self._process_sequential_matching(tolerance)
+                matched_count = len(self.df_final_pivot[self.df_final_pivot['구분키'] == '순차대사'])
+                print(f"  - 순차대사 완료: {matched_count}건")
+            except Exception as e:
+                print(f"⚠️ 순차대사 경고: {str(e)}")
+            
+            # Step C: 부분대사
+            try:
+                self._process_partial_matching(tolerance)
+                matched_count = len(self.df_final_pivot[self.df_final_pivot['구분키'] == '부분대사'])
+                print(f"  - 부분대사 완료: {matched_count}건")
+            except Exception as e:
+                print(f"⚠️ 부분대사 경고: {str(e)}")
+            
+            # Step D: 부분대사(수기확인)
+            try:
+                self._process_partial_matching_manual(tolerance)
+                matched_count = len(self.df_final_pivot[self.df_final_pivot['구분키'] == '수기확인'])
+                print(f"  - 부분대사(수기확인) 완료: {matched_count}건")
+            except Exception as e:
+                print(f"⚠️ 부분대사(수기확인) 경고: {str(e)}")
+                
+            # 전체 대사 결과 요약
+            total_count = len(self.df_final_pivot)
+            matched_total = len(self.df_final_pivot[self.df_final_pivot['구분키'] != ''])
+            print(f"  - 전체 대사율: {matched_total}/{total_count} ({matched_total/total_count*100:.1f}%)")
+            
+        except Exception as e:
+            raise Exception(f"대사 처리 실패: {str(e)}")
     
     def _process_exact_matching(self, tolerance):
         """금액대사 (1:1 정확한 매칭)"""
@@ -619,9 +842,120 @@ class ReconciliationService:
             self.filtered_df_book["차변금액"] = self.filtered_df_book["차변금액"].str.replace(",", "", regex=True).astype(float)
             self.filtered_df_book["대변금액"] = self.filtered_df_book["대변금액"].str.replace(",", "", regex=True).astype(float)
             self.filtered_df_book = self.filtered_df_book[self.filtered_df_book['차변금액'] != 0]
+            
+            # match_tax_and_book 로직 적용
+            self._process_payment_book_matching()
         
         # 지불예상금액 계산
         self.df_final_pivot["지불예상금액"] = self.df_final_pivot["국세청공급가액"] + self.df_final_pivot["국세청세액"]
+    
+    def _process_payment_book_matching(self, tolerance=1e-6):
+        """
+        세금계산서(df_tax_new)와 지불보조장(filtered_df_book) 대사
+        노트북의 match_tax_and_book 함수 로직 이식
+        """
+        # 필요한 컬럼 생성
+        if '구분키2' not in self.df_tax_new.columns:
+            self.df_tax_new['구분키2'] = None
+        if '차변금액' not in self.df_tax_new.columns:
+            self.df_tax_new['차변금액'] = None
+        if '전표번호' not in self.df_tax_new.columns:
+            self.df_tax_new['전표번호'] = None
+        if '회계일' not in self.df_tax_new.columns:
+            self.df_tax_new['회계일'] = None
+        if '비고' not in self.df_tax_new.columns:
+            self.df_tax_new['비고'] = ""
+            
+        # filtered_df_book에 필요한 컬럼 생성
+        if '구분키' not in self.filtered_df_book.columns:
+            self.filtered_df_book['구분키'] = ""
+        if 'Key' not in self.filtered_df_book.columns:
+            self.filtered_df_book['Key'] = None
+            
+        # 회계일 datetime 변환
+        if not pd.api.types.is_datetime64_any_dtype(self.filtered_df_book['회계일']):
+            self.filtered_df_book['회계일'] = pd.to_datetime(self.filtered_df_book['회계일'], errors='coerce')
+            
+        # 각 세금계산서에 대해 매칭 처리
+        for idx, tax_row in self.df_tax_new.iterrows():
+            # 이미 대사처리된 경우 건너뛰기
+            if tax_row['구분키'] in [None, "", np.nan]:
+                continue
+            if tax_row['구분키2'] not in [None, "", np.nan]:
+                continue
+                
+            # 대사금액 계산: 공급가액 + 세액
+            pivot_amount = tax_row['공급가액'] + tax_row['세액']
+            pivot_biz = tax_row['업체사업자번호']
+            pivot_year = tax_row['작성년도']
+            pivot_month = tax_row['작성월']
+            
+            # 허용 회계일 범위: pivot_month의 1일부터 +2개월 마지막 날까지
+            allowed_lower = pd.Timestamp(pivot_year, pivot_month, 1)
+            allowed_upper = allowed_lower + pd.DateOffset(months=2) - pd.DateOffset(days=1)
+            
+            # 후보 필터링
+            candidates = self.filtered_df_book[
+                (self.filtered_df_book['거래처번호'] == pivot_biz) &
+                (self.filtered_df_book['구분키'] == "") &
+                (self.filtered_df_book['회계일'] >= allowed_lower) &
+                (self.filtered_df_book['회계일'] <= allowed_upper)
+            ]
+            
+            if candidates.empty:
+                continue
+                
+            # 회계일 기준 오름차순 정렬
+            candidates = candidates.sort_values(by='회계일')
+            
+            # 1) 1:1 매칭 시도
+            exact_match = candidates[np.abs(candidates['차변금액'] - pivot_amount) < tolerance]
+            if not exact_match.empty:
+                candidate_index = exact_match.index[0]
+                candidate_row = candidates.loc[candidate_index]
+                
+                self.df_tax_new.at[idx, '구분키2'] = "매입금액대사"
+                self.df_tax_new.at[idx, '차변금액'] = candidate_row['차변금액']
+                self.df_tax_new.at[idx, '전표번호'] = candidate_row['전표번호']
+                self.df_tax_new.at[idx, '회계일'] = candidate_row['회계일'].strftime("%Y-%m-%d")
+                
+                # filtered_df_book 업데이트
+                self.filtered_df_book.at[candidate_index, 'Key'] = tax_row['대사여부']
+                self.filtered_df_book.at[candidate_index, '구분키'] = "매입금액대사"
+                continue
+                
+            # 2) 1:1 매칭 실패 시, 부분조합(매입순차대사(조합)) 매칭 시도
+            subset_found, subset_indices = self._find_subset_sum_all_combinations(
+                candidates['차변금액'],
+                pivot_amount,
+                tolerance
+            )
+            
+            if subset_found and len(subset_indices) > 0:
+                subset_cands = candidates.loc[subset_indices]
+                self.df_tax_new.at[idx, '구분키2'] = "매입순차대사(조합)"
+                self.df_tax_new.at[idx, '차변금액'] = subset_cands['차변금액'].sum()
+                self.df_tax_new.at[idx, '전표번호'] = subset_cands.iloc[0]['전표번호']
+                self.df_tax_new.at[idx, '회계일'] = subset_cands['회계일'].max().strftime("%Y-%m-%d")
+                
+                # 회계일 월이 모두 동일하지 않으면 "확인요청" 및 분할납부 내역 기록
+                unique_months = subset_cands['회계일'].dt.month.unique()
+                if len(unique_months) > 1:
+                    self.df_tax_new.at[idx, '비고'] = "확인요청"
+                    subset_cands = subset_cands.copy()
+                    subset_cands['회계월'] = subset_cands['회계일'].dt.strftime('%Y-%m')
+                    monthly_group = subset_cands.groupby('회계월', as_index=False)['차변금액'].sum()
+                    
+                    for j, row in monthly_group.iterrows():
+                        amount_col = f"분할납부{j+1}_금액"
+                        month_col = f"분할납부{j+1}_월"
+                        self.df_tax_new.at[idx, amount_col] = row['차변금액']
+                        self.df_tax_new.at[idx, month_col] = row['회계월']
+                        
+                # 각 후보에 대해 filtered_df_book 업데이트 (순번 부여)
+                for i, si in enumerate(subset_indices, start=1):
+                    self.filtered_df_book.at[si, 'Key'] = tax_row['대사여부']
+                    self.filtered_df_book.at[si, '구분키'] = f"매입순차대사(조합)-{i}"
     
     def _create_final_results(self):
         """최종 결과 생성"""
@@ -740,4 +1074,169 @@ class ReconciliationService:
             'unmatched': len(self.df_final_pivot[self.df_final_pivot['구분키'] == ''])
         }
         
+        # 검증 결과 추가
+        validation_results = self._validate_reconciliation_results()
+        summary['validation'] = validation_results
+        
         return summary
+    
+    def _validate_reconciliation_results(self):
+        """대사 결과 검증 로직"""
+        validation_results = {
+            'status': 'passed',
+            'errors': [],
+            'warnings': [],
+            'statistics': {}
+        }
+        
+        try:
+            # 1. 기본 데이터 무결성 검증
+            if self.df_final_pivot is None or len(self.df_final_pivot) == 0:
+                validation_results['errors'].append("대사 결과가 없습니다.")
+                validation_results['status'] = 'failed'
+                return validation_results
+                
+            # 2. 대사율 계산
+            total_count = len(self.df_final_pivot)
+            matched_count = len(self.df_final_pivot[self.df_final_pivot['구분키'] != ''])
+            reconciliation_rate = (matched_count / total_count * 100) if total_count > 0 else 0
+            
+            validation_results['statistics']['reconciliation_rate'] = round(reconciliation_rate, 2)
+            validation_results['statistics']['matched_count'] = matched_count
+            validation_results['statistics']['unmatched_count'] = total_count - matched_count
+            
+            # 3. 금액 일치성 검증
+            amount_validations = self._validate_amounts()
+            validation_results['errors'].extend(amount_validations['errors'])
+            validation_results['warnings'].extend(amount_validations['warnings'])
+            
+            # 4. 중복 대사 검증
+            duplicate_validations = self._validate_duplicates()
+            validation_results['errors'].extend(duplicate_validations['errors'])
+            validation_results['warnings'].extend(duplicate_validations['warnings'])
+            
+            # 5. 날짜 범위 검증
+            date_validations = self._validate_date_ranges()
+            validation_results['warnings'].extend(date_validations['warnings'])
+            
+            # 6. 지불보조장 대사 검증
+            if hasattr(self, 'filtered_df_book') and self.filtered_df_book is not None:
+                book_validations = self._validate_payment_book_matching()
+                validation_results['errors'].extend(book_validations['errors'])
+                validation_results['warnings'].extend(book_validations['warnings'])
+            
+            # 최종 상태 결정
+            if validation_results['errors']:
+                validation_results['status'] = 'failed'
+            elif validation_results['warnings']:
+                validation_results['status'] = 'passed_with_warnings'
+                
+        except Exception as e:
+            validation_results['status'] = 'error'
+            validation_results['errors'].append(f"검증 중 오류 발생: {str(e)}")
+            
+        return validation_results
+    
+    def _validate_amounts(self):
+        """금액 일치성 검증"""
+        result = {'errors': [], 'warnings': []}
+        
+        # 대사된 항목들의 금액 검증
+        for idx, row in self.df_final_pivot.iterrows():
+            if row['구분키'] in ['금액대사', '금액대사(수기확인)']:
+                # 1:1 대사는 금액이 정확히 일치해야 함
+                if pd.notna(row['국세청공급가액']):
+                    if abs(row['최종매입금액'] - row['국세청공급가액']) > 1e-6:
+                        result['errors'].append(
+                            f"행 {idx}: 금액대사이나 금액 불일치 (매입: {row['최종매입금액']}, 국세청: {row['국세청공급가액']})"
+                        )
+                        
+            elif row['구분키'] == '순차대사':
+                # 순차대사는 합계가 일치해야 함
+                if pd.notna(row['국세청공급가액']):
+                    if abs(row['최종매입금액'] - row['국세청공급가액']) > 1e-6:
+                        result['warnings'].append(
+                            f"행 {idx}: 순차대사 금액 차이 (매입: {row['최종매입금액']}, 국세청: {row['국세청공급가액']})"
+                        )
+                        
+            elif row['구분키'] in ['부분대사', '수기확인']:
+                # 부분대사는 국세청 금액이 더 클 수 있음
+                if pd.notna(row['국세청공급가액']):
+                    if row['국세청공급가액'] < row['최종매입금액']:
+                        result['warnings'].append(
+                            f"행 {idx}: 부분대사이나 국세청 금액이 더 작음"
+                        )
+                        
+        return result
+    
+    def _validate_duplicates(self):
+        """중복 대사 검증"""
+        result = {'errors': [], 'warnings': []}
+        
+        # 세금계산서 중복 사용 확인
+        if hasattr(self, 'df_tax_new') and self.df_tax_new is not None:
+            tax_usage = self.df_tax_new[self.df_tax_new['대사여부'] != '']['대사여부'].value_counts()
+            
+            # 대사여부에서 기본 키 추출 (예: "202401429710과세-1" → "202401429710과세")
+            base_keys = {}
+            for key in tax_usage.index:
+                if '-' in key:
+                    base_key = key.rsplit('-', 1)[0]
+                    if base_key in base_keys:
+                        base_keys[base_key] += 1
+                    else:
+                        base_keys[base_key] = 1
+                        
+            # 같은 기본 키가 여러 번 사용된 경우 경고
+            for base_key, count in base_keys.items():
+                if count > 1:
+                    result['warnings'].append(
+                        f"세금계산서가 여러 대사에 사용됨: {base_key} ({count}회)"
+                    )
+                    
+        return result
+    
+    def _validate_date_ranges(self):
+        """날짜 범위 검증"""
+        result = {'warnings': []}
+        
+        # 국세청작성일과 회계처리 날짜 차이 확인
+        for idx, row in self.df_final_pivot.iterrows():
+            if pd.notna(row['국세청작성일']):
+                작성년월 = pd.to_datetime(row['국세청작성일']).strftime('%Y%m')
+                매입년월 = str(int(row['년월']))
+                
+                if 작성년월 != 매입년월:
+                    # 날짜 차이 계산
+                    date_diff = pd.to_datetime(작성년월 + '01') - pd.to_datetime(매입년월 + '01')
+                    months_diff = date_diff.days / 30
+                    
+                    if abs(months_diff) > 2:
+                        result['warnings'].append(
+                            f"행 {idx}: 작성년월({작성년월})과 매입년월({매입년월}) 차이가 2개월 초과"
+                        )
+                        
+        return result
+    
+    def _validate_payment_book_matching(self):
+        """지불보조장 대사 검증"""
+        result = {'errors': [], 'warnings': []}
+        
+        # 대사된 지불보조장 항목 수 확인
+        matched_book = self.filtered_df_book[self.filtered_df_book['구분키'] != '']
+        unmatched_book = self.filtered_df_book[self.filtered_df_book['구분키'] == '']
+        
+        if len(unmatched_book) > 0:
+            result['warnings'].append(
+                f"지불보조장 미대사 항목: {len(unmatched_book)}건"
+            )
+            
+        # 분할납부 확인
+        if '비고' in self.df_tax_new.columns:
+            split_payments = self.df_tax_new[self.df_tax_new['비고'] == '확인요청']
+            if len(split_payments) > 0:
+                result['warnings'].append(
+                    f"분할납부 확인 필요: {len(split_payments)}건"
+                )
+                
+        return result
