@@ -1,6 +1,4 @@
-"""
-UI 위젯 패키지
-"""
-from .analysis_widget import AnalysisWidget
+# widgets 모듈
+from .progress_dialog import ProgressDialog
 
-__all__ = ['AnalysisWidget']
+__all__ = ['ProgressDialog']

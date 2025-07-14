@@ -1,6 +1,3 @@
-"""
-개선된 메인 윈도우 UI - 파일 업로드 방식
-"""
 from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
     QPushButton, QLabel, QLineEdit, QComboBox, QGroupBox,
@@ -24,6 +21,8 @@ from kfunction import read_excel_data
 
 from src.services.excel_service import ExcelService
 from ..services.reconciliation_service_v2 import ReconciliationService
+from .workers.reconciliation_worker import ReconciliationWorker
+from .widgets.progress_dialog import ProgressDialog
 
 class FileUploadWidget(QWidget):
     """파일 업로드 위젯"""
@@ -105,67 +104,7 @@ class FileUploadWidget(QWidget):
         self.status_label.setText("⏳ 대기")
         self.status_label.setStyleSheet("")
 
-class ReconciliationThread(QThread):
-    """대사 처리 스레드"""
-    progress = pyqtSignal(int)
-    message = pyqtSignal(str)
-    finished = pyqtSignal(dict)
-    error = pyqtSignal(str)
-
-    def __init__(self, file_paths: Dict[str, str], period: list):
-        super().__init__()
-        self.file_paths = file_paths
-        self.period = period  # [start_date, end_date]
-
-    def run(self):
-        try:
-            self.message.emit("대사 프로세스 시작...")
-            self.progress.emit(10)
-
-            # 임시 설정 생성
-            config = {
-                'excel_files': {
-                    'supplier_purchase': Path(self.file_paths['supplier_purchase']).name,
-                    'standard': Path(self.file_paths['standard']).name,
-                    'tax_invoice': Path(self.file_paths['tax_invoice']).name,
-                    'tax_invoice_wis': Path(self.file_paths['tax_invoice_wis']).name,
-                    'payment_ledger': Path(self.file_paths.get('payment_ledger', '')).name,
-                    'processing_fee': Path(self.file_paths.get('processing_fee', '')).name
-                }
-            }
-
-            # 서비스 초기화
-            excel_service = ExcelService()
-            reconciliation_service = ReconciliationService(excel_service)
-
-            # 파일 경로를 직접 사용하도록 수정 필요
-            # 여기서는 임시로 data 폴더에 복사하는 방식 사용
-            import shutil
-            data_dir = Path("data")
-            data_dir.mkdir(exist_ok=True)
-
-            for file_type, file_path in self.file_paths.items():
-                if file_path:
-                    dest = data_dir / Path(file_path).name
-                    shutil.copy2(file_path, dest)
-
-            self.progress.emit(30)
-
-            # 대사 실행 (날짜 정보 전달)
-            start_date, end_date = self.period
-            results = reconciliation_service.process_reconciliation(
-                start_date=start_date,
-                end_date=end_date
-            )
-
-            # 날짜 기반 필터링은 이미 process_all_reconciliation에서 처리됨
-
-            self.progress.emit(100)
-            self.message.emit("대사 완료!")
-            self.finished.emit(results)
-
-        except Exception as e:
-            self.error.emit(str(e))
+        
 
 class ImprovedMainWindow(QMainWindow):
     def __init__(self):
@@ -418,7 +357,7 @@ class ImprovedMainWindow(QMainWindow):
         self.log(f"✅ {file_type} 파일 업로드: {Path(file_path).name}")
 
         # 필수 파일이 모두 업로드되었는지 확인
-        required_files = ['supplier_purchase', 'standard', 'tax_invoice', 'tax_invoice_wis']
+        required_files = ['supplier_purchase', 'standard', 'tax_invoice', 'tax_invoice_wis', 'payment_ledger']
         all_uploaded = all(f in self.file_paths for f in required_files)
 
         if all_uploaded:
@@ -492,23 +431,35 @@ class ImprovedMainWindow(QMainWindow):
         self.log(f"=== 대사 실행 시작 ===")
         self.log(f"선택된 기간: {start_date.strftime('%Y-%m-%d')} ~ {end_date.strftime('%Y-%m-%d')}")
 
+        # 진행률 다이얼로그 표시
+        self.progress_dialog = ProgressDialog(self, "매입대사 처리 중")
+        self.progress_dialog.show()
+
         # UI 비활성화
         self.btn_execute.setEnabled(False)
         self.btn_download.setEnabled(False)
-        self.progress_bar.setVisible(True)
 
         # 스레드 실행
-        self.thread = ReconciliationThread(self.file_paths, period)  # 날짜 정보 전달
-        self.thread.progress.connect(self.update_progress)
+        self.thread = ReconciliationWorker(self.file_paths, start_date, end_date)
+        self.thread.progress.connect(self.progress_dialog.update_progress)
+        self.thread.message.connect(self.progress_dialog.append_message)
         self.thread.message.connect(self.log)
         self.thread.finished.connect(self.on_reconciliation_finished)
         self.thread.error.connect(self.on_reconciliation_error)
+        
+        # 다이얼로그 취소 버튼 연결
+        self.progress_dialog.canceled.connect(self.thread.stop)
+        
         self.thread.start()
 
     def on_reconciliation_finished(self, results: dict):
         """대사 완료"""
         self.current_results = results
         self.log("✅ 대사 완료!")
+        
+        # 진행률 다이얼로그 완료 처리
+        if hasattr(self, 'progress_dialog'):
+            self.progress_dialog.on_finished()
 
         # 결과 표시
         if 'reconciliation_result' in results:
@@ -531,6 +482,10 @@ class ImprovedMainWindow(QMainWindow):
     def on_reconciliation_error(self, error_msg: str):
         """대사 오류"""
         self.log(f"❌ 오류: {error_msg}")
+        
+        # 진행률 다이얼로그 오류 처리
+        if hasattr(self, 'progress_dialog'):
+            self.progress_dialog.on_error(error_msg)
         QMessageBox.critical(self, "오류", error_msg)
 
         # UI 활성화

@@ -167,6 +167,46 @@
       "data": {
         "title": "UI/UX 설계 및 레이아웃 개선"
       }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "89bba2fc-060f-411a-a54f-1f207c7e2ef3",
+      "timestamp": "2025-07-14T13:33:25.853110",
+      "data": {
+        "from": "in_progress",
+        "to": "completed",
+        "task_name": "UI/UX 설계 및 레이아웃 개선",
+        "note": "Excel 파일 읽기 오류 해결 및 kfunction.py 복원 완료",
+        "duration": "1시간 49분"
+      }
+    },
+    {
+      "type": "task_completed",
+      "entity_id": "89bba2fc-060f-411a-a54f-1f207c7e2ef3",
+      "timestamp": "2025-07-14T13:33:25.856109",
+      "data": {
+        "title": "UI/UX 설계 및 레이아웃 개선",
+        "note": "Excel 파일 읽기 오류 해결 및 kfunction.py 복원 완료"
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "f593c242-e5d1-4525-aea7-44278c8d6c3a",
+      "timestamp": "2025-07-14T13:34:24.766131",
+      "data": {
+        "from": "todo",
+        "to": "in_progress",
+        "task_name": "파일 업로드 모듈 개발",
+        "task_description": ""
+      }
+    },
+    {
+      "type": "task_started",
+      "entity_id": "f593c242-e5d1-4525-aea7-44278c8d6c3a",
+      "timestamp": "2025-07-14T13:34:24.769133",
+      "data": {
+        "title": "파일 업로드 모듈 개발"
+      }
     }
   ]
 }

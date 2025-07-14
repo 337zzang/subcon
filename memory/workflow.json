@@ -25,23 +25,25 @@
           "id": "89bba2fc-060f-411a-a54f-1f207c7e2ef3",
           "title": "UI/UX 설계 및 레이아웃 개선",
           "description": "",
-          "status": "in_progress",
+          "status": "completed",
           "created_at": "2025-07-14T09:44:13.385831+09:00",
-          "updated_at": "2025-07-14T11:43:45.062829",
+          "updated_at": "2025-07-14T13:33:25.853110",
           "started_at": "2025-07-14T11:43:45.062829",
-          "completed_at": null,
+          "completed_at": "2025-07-14T13:33:25.853110",
           "duration": null,
-          "notes": [],
+          "notes": [
+            "[완료] Excel 파일 읽기 오류 해결 및 kfunction.py 복원 완료"
+          ],
           "outputs": {}
         },
         {
           "id": "f593c242-e5d1-4525-aea7-44278c8d6c3a",
           "title": "파일 업로드 모듈 개발",
           "description": "",
-          "status": "todo",
+          "status": "in_progress",
           "created_at": "2025-07-14T09:44:13.387832+09:00",
-          "updated_at": "2025-07-14T09:44:13.387832+09:00",
-          "started_at": null,
+          "updated_at": "2025-07-14T13:34:24.766131",
+          "started_at": "2025-07-14T13:34:24.766131",
           "completed_at": null,
           "duration": null,
           "notes": [],
@@ -152,5 +154,5 @@
   "events_file": "workflow_events.json",
   "version": "3.0.0",
   "project_name": "subcon",
-  "last_saved": "2025-07-14T11:43:45.066828"
+  "last_saved": "2025-07-14T13:34:24.772130"
 }
