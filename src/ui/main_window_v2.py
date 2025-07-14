@@ -264,12 +264,16 @@ class ImprovedMainWindow(QMainWindow):
         # 날짜 선택
         date_layout = QHBoxLayout()
         
+        # 오늘 날짜 기준으로 현재 연도 가져오기
+        current_year = datetime.now().year
+        
         # 시작일
         date_layout.addWidget(QLabel("시작일:"))
         self.start_date = QDateEdit()
-        self.start_date.setDate(QDate(2024, 1, 1))  # 2024-01-01
+        self.start_date.setDate(QDate(current_year, 1, 1))  # 현재 연도 1월 1일
         self.start_date.setCalendarPopup(True)
         self.start_date.setDisplayFormat("yyyy-MM-dd")
+        self.start_date.dateChanged.connect(self.validate_dates)  # 날짜 변경 시 검증
         date_layout.addWidget(self.start_date)
         
         date_layout.addWidget(QLabel("~"))
@@ -277,16 +281,17 @@ class ImprovedMainWindow(QMainWindow):
         # 종료일
         date_layout.addWidget(QLabel("종료일:"))
         self.end_date = QDateEdit()
-        self.end_date.setDate(QDate(2024, 6, 30))  # 2024-06-30
+        self.end_date.setDate(QDate(current_year, 6, 30))  # 현재 연도 6월 30일
         self.end_date.setCalendarPopup(True)
         self.end_date.setDisplayFormat("yyyy-MM-dd")
+        self.end_date.dateChanged.connect(self.validate_dates)  # 날짜 변경 시 검증
         date_layout.addWidget(self.end_date)
         
         date_layout.addStretch()
         period_layout.addLayout(date_layout)
         
         # 날짜 유효성 설명
-        info_label = QLabel("* 대사 기간을 선택하세요 (노트북 기본값: 2024-01-01 ~ 2024-06-30)")
+        info_label = QLabel(f"* 대사 기간을 선택하세요 (기본값: {current_year}년 전반기)")
         info_label.setStyleSheet("color: #666; font-size: 11px;")
         period_layout.addWidget(info_label)
         
@@ -383,6 +388,20 @@ class ImprovedMainWindow(QMainWindow):
             self.btn_execute.setEnabled(True)
             self.log("✅ 모든 필수 파일이 업로드되었습니다. 대사를 실행할 수 있습니다.")
 
+    def validate_dates(self):
+        """날짜 유효성 검사"""
+        start_date = self.start_date.date()
+        end_date = self.end_date.date()
+        
+        if start_date > end_date:
+            QMessageBox.warning(
+                self, 
+                "날짜 오류", 
+                "시작일이 종료일보다 늦을 수 없습니다.\n날짜를 다시 선택해주세요."
+            )
+            # 날짜를 원래대로 되돌림
+            self.start_date.setDate(end_date.addDays(-1))
+            
     def toggle_months(self, checked: bool):
         """더 이상 사용되지 않음 (날짜 선택으로 변경)"""
         pass
@@ -423,9 +442,14 @@ class ImprovedMainWindow(QMainWindow):
             
         start_date, end_date = period
         
-        # 날짜 유효성 검사
+        # 날짜 유효성 검사 (한번 더 확인)
         if start_date > end_date:
-            QMessageBox.warning(self, "경고", "시작일이 종료일보다 늦을 수 없습니다.")
+            QMessageBox.critical(
+                self, 
+                "날짜 오류", 
+                f"시작일({start_date.strftime('%Y-%m-%d')})이 종료일({end_date.strftime('%Y-%m-%d')})보다 늦습니다.\n"
+                "날짜를 다시 선택해주세요."
+            )
             return
 
         self.log(f"=== 대사 실행 시작 ===")
