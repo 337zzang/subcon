@@ -25,10 +25,10 @@
           "id": "89bba2fc-060f-411a-a54f-1f207c7e2ef3",
           "title": "UI/UX 설계 및 레이아웃 개선",
           "description": "",
-          "status": "todo",
+          "status": "in_progress",
           "created_at": "2025-07-14T09:44:13.385831+09:00",
-          "updated_at": "2025-07-14T09:44:13.385831+09:00",
-          "started_at": null,
+          "updated_at": "2025-07-14T11:43:45.062829",
+          "started_at": "2025-07-14T11:43:45.062829",
           "completed_at": null,
           "duration": null,
           "notes": [],
@@ -152,5 +152,5 @@
   "events_file": "workflow_events.json",
   "version": "3.0.0",
   "project_name": "subcon",
-  "last_saved": "2025-07-14T09:57:02.604823"
+  "last_saved": "2025-07-14T11:43:45.066828"
 }

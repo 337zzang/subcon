@@ -5,9 +5,14 @@ import pandas as pd
 import numpy as np
 import win32com.client as win32
 import os
+import sys
 from datetime import datetime
 from typing import Dict, List, Tuple, Optional
 from pathlib import Path
+
+# kfunction 모듈 경로 추가
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from kfunction import read_excel_data
 
 from ..models.reconciliation_models import DataContainer
 
@@ -37,12 +42,12 @@ class ReconciliationService:
         try:
             # 1. 기준 데이터 로드
             if 'standard' in file_paths:
-                self.df_standard = pd.read_excel(file_paths['standard'])
+                self.df_standard = read_excel_data(file_paths['standard'])
                 print(f"기준 데이터 로드: {len(self.df_standard)}건")
             
             # 2. 협력사단품별매입 로드
             if 'purchase_detail' in file_paths:
-                self.df = pd.read_excel(file_paths['purchase_detail'], header=0)
+                self.df = read_excel_data(file_paths['purchase_detail'], header=0)
                 # Grand Total 행 제거 (노트북 로직)
                 if len(self.df) > 0:
                     self.df = self.df.drop(0).reset_index(drop=True)
@@ -50,22 +55,22 @@ class ReconciliationService:
             
             # 3. 매입세금계산서 로드
             if 'tax_invoice' in file_paths:
-                self.df_tax_hifi = pd.read_excel(file_paths['tax_invoice'], header=[0,1])
+                self.df_tax_hifi = read_excel_data(file_paths['tax_invoice'], header=[0,1])
                 print(f"매입세금계산서 로드: {len(self.df_tax_hifi)}건")
             
             # 4. 지불보조장 로드
             if 'payment_book' in file_paths:
-                self.df_book = pd.read_excel(file_paths['payment_book'])
+                self.df_book = read_excel_data(file_paths['payment_book'])
                 print(f"지불보조장 로드: {len(self.df_book)}건")
             
             # 5. 매입세금계산서(WIS) 로드
             if 'tax_invoice_wis' in file_paths:
-                self.df_num = pd.read_excel(file_paths['tax_invoice_wis'])
+                self.df_num = read_excel_data(file_paths['tax_invoice_wis'])
                 print(f"매입세금계산서(WIS) 로드: {len(self.df_num)}건")
             
             # 6. 임가공비 로드 (선택사항)
             if 'processing_fee' in file_paths and file_paths['processing_fee']:
-                self.df_processing = pd.read_excel(file_paths['processing_fee'])
+                self.df_processing = read_excel_data(file_paths['processing_fee'])
                 print(f"임가공비 로드: {len(self.df_processing)}건")
                 
         except Exception as e:

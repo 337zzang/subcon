@@ -2,6 +2,12 @@ import pandas as pd
 from typing import List, Dict, Optional
 from datetime import datetime
 from pathlib import Path
+import sys
+import os
+
+# kfunction 모듈 경로 추가
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from kfunction import read_excel_data
 
 from ..models import Supplier, Purchase, Payment, TaxInvoice
 
@@ -13,7 +19,9 @@ class ExcelService:
     def read_excel_with_validation(file_path: str, sheet_name=0, header=0) -> pd.DataFrame:
         """Excel 파일 읽기 with 검증"""
         try:
-            df = pd.read_excel(file_path, sheet_name=sheet_name, header=header)
+            # kfunction의 read_excel_data 사용
+            # sheet_name이 문자열인 경우 그대로 사용, 숫자인 경우 sheet 파라미터로 전달
+            df = read_excel_data(file_path, sheet=sheet_name, header=header)
             return df
         except Exception as e:
             raise Exception(f"Excel 파일 읽기 오류: {str(e)}")

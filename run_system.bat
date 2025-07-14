@@ -1,61 +1,61 @@
 @echo off
 chcp 65001 > nul
 echo ========================================
-echo   매입대사 시스템 v2.0 실행
+echo   Purchase Reconciliation System v2.0
 echo ========================================
 echo.
 
-REM Python 경로 설정
+REM Python path configuration
 set PYTHON_PATH=
 
-REM Miniconda 경로 확인
+REM Check Miniconda path
 if exist "C:\Users\Administrator\miniconda3\python.exe" (
     set PYTHON_PATH=C:\Users\Administrator\miniconda3\python.exe
-    echo ✓ Miniconda Python 발견
+    echo [OK] Miniconda Python found
     goto :run_app
 )
 
-REM Anaconda 경로 확인
+REM Check Anaconda path
 if exist "C:\Users\Administrator\anaconda3\python.exe" (
     set PYTHON_PATH=C:\Users\Administrator\anaconda3\python.exe
-    echo ✓ Anaconda Python 발견
+    echo [OK] Anaconda Python found
     goto :run_app
 )
 
-REM 일반 Python 경로 확인
+REM Check system Python
 where python >nul 2>nul
 if %ERRORLEVEL% EQU 0 (
     set PYTHON_PATH=python
-    echo ✓ 시스템 Python 발견
+    echo [OK] System Python found
     goto :run_app
 )
 
-REM Python을 찾을 수 없음
-echo [오류] Python을 찾을 수 없습니다.
-echo Python을 설치하거나 PATH를 설정해주세요.
+REM Python not found
+echo [ERROR] Python not found.
+echo Please install Python or configure PATH environment.
 pause
 exit /b 1
 
 :run_app
 echo.
-echo Python 경로: %PYTHON_PATH%
+echo Python path: %PYTHON_PATH%
 echo.
-echo 프로그램을 시작합니다...
+echo Starting application...
 echo.
 
-REM Python 실행
+REM Execute Python
 "%PYTHON_PATH%" run_app.py
 
 if errorlevel 1 (
     echo.
-    echo [오류] 프로그램 실행 중 문제가 발생했습니다.
+    echo [ERROR] An error occurred while running the program.
     echo.
-    echo 다음 명령으로 필요한 패키지를 설치해주세요:
+    echo Please install required packages with:
     echo "%PYTHON_PATH%" -m pip install -r requirements.txt
     echo.
     pause
 ) else (
     echo.
-    echo 프로그램이 정상적으로 종료되었습니다.
+    echo Program terminated successfully.
     timeout /t 3
 )

@@ -148,6 +148,25 @@
         "title": "노트북 파일 분석 및 요구사항 정리",
         "note": "노트북 코드 분석 및 PyQt6 UI 재설계 완료"
       }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "89bba2fc-060f-411a-a54f-1f207c7e2ef3",
+      "timestamp": "2025-07-14T11:43:45.062829",
+      "data": {
+        "from": "todo",
+        "to": "in_progress",
+        "task_name": "UI/UX 설계 및 레이아웃 개선",
+        "task_description": ""
+      }
+    },
+    {
+      "type": "task_started",
+      "entity_id": "89bba2fc-060f-411a-a54f-1f207c7e2ef3",
+      "timestamp": "2025-07-14T11:43:45.064828",
+      "data": {
+        "title": "UI/UX 설계 및 레이아웃 개선"
+      }
     }
   ]
 }

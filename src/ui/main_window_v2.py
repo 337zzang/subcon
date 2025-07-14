@@ -15,6 +15,12 @@ from typing import Dict, Optional
 from pathlib import Path
 from datetime import datetime
 import json
+import sys
+import os
+
+# kfunction 모듈 경로 추가
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from kfunction import read_excel_data
 
 from src.services.excel_service import ExcelService
 from ..services.reconciliation_service_v2 import ReconciliationService
@@ -80,7 +86,10 @@ class FileUploadWidget(QWidget):
         """파일 검증"""
         try:
             # 간단한 검증 - 파일을 열 수 있는지 확인
-            pd.read_excel(self.file_path, nrows=1)
+            # kfunction의 read_excel_data 사용 (첫 5행만 읽어서 검증)
+            df = read_excel_data(self.file_path)
+            if len(df) > 5:
+                df = df.head(5)  # 검증용으로 5행만 확인
             self.status_label.setText("✅ 확인")
             self.status_label.setStyleSheet("color: green;")
             self.file_uploaded.emit(self.file_type, self.file_path)

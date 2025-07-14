@@ -1,6 +1,6 @@
 @echo off
 echo =====================================
-echo   필수 패키지 설치 중...
+echo   Installing required packages...
 echo =====================================
 echo.
 
@@ -8,6 +8,6 @@ pip install -r requirements.txt
 
 echo.
 echo =====================================
-echo   설치 완료!
+echo   Installation completed!
 echo =====================================
 pause

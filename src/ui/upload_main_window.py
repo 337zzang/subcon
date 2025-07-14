@@ -12,6 +12,10 @@ from PyQt6.QtCore import Qt, QDate, QThread, pyqtSignal
 from PyQt6.QtGui import QIcon, QPixmap, QDragEnterEvent, QDropEvent
 import pandas as pd
 
+# kfunction 모듈 경로 추가
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from kfunction import read_excel_data
+
 # 프로젝트 서비스 import
 from ..services.data_manager import DataManager
 from ..services.excel_service import ExcelService
@@ -138,7 +142,10 @@ class FileUploadWidget(QWidget):
         """파일 검증 로직"""
         try:
             # Excel 파일 읽기 시도
-            df = pd.read_excel(file_path, nrows=5)
+            # kfunction의 read_excel_data 사용
+            df = read_excel_data(file_path)
+            if len(df) > 5:
+                df = df.head(5)  # 검증용으로 5행만 확인
 
             # 파일 타입별 검증 (매입대사2.ipynb 참고)
             if self.file_type == "supplier":
