@@ -5,9 +5,9 @@ from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
     QPushButton, QLabel, QLineEdit, QComboBox, QGroupBox,
     QFileDialog, QMessageBox, QProgressBar, QTableWidget,
-    QTableWidgetItem, QTextEdit, QSplitter, QHeaderView
+    QTableWidgetItem, QTextEdit, QSplitter, QHeaderView, QDateEdit
 )
-from PyQt6.QtCore import Qt, pyqtSignal, QThread, QTimer
+from PyQt6.QtCore import Qt, pyqtSignal, QThread, QTimer, QDate
 from PyQt6.QtGui import QFont, QPalette, QColor
 import pandas as pd
 from typing import Dict, Optional
@@ -97,10 +97,10 @@ class ReconciliationThread(QThread):
     finished = pyqtSignal(dict)
     error = pyqtSignal(str)
 
-    def __init__(self, file_paths: Dict[str, str], selected_months: list):
+    def __init__(self, file_paths: Dict[str, str], period: list):
         super().__init__()
         self.file_paths = file_paths
-        self.selected_months = selected_months
+        self.period = period  # [start_date, end_date]
 
     def run(self):
         try:
@@ -136,15 +136,14 @@ class ReconciliationThread(QThread):
 
             self.progress.emit(30)
 
-            # 대사 실행
-            results = reconciliation_service.process_all_reconciliation(config)
+            # 대사 실행 (날짜 정보 전달)
+            start_date, end_date = self.period
+            results = reconciliation_service.process_reconciliation(
+                start_date=start_date,
+                end_date=end_date
+            )
 
-            # 선택한 월로 필터링
-            if self.selected_months and 'reconciliation_result' in results:
-                df = results['reconciliation_result']
-                df['년월_str'] = df['년월'].astype(str)
-                df_filtered = df[df['년월_str'].isin(self.selected_months)]
-                results['reconciliation_result'] = df_filtered
+            # 날짜 기반 필터링은 이미 process_all_reconciliation에서 처리됨
 
             self.progress.emit(100)
             self.message.emit("대사 완료!")
@@ -243,7 +242,7 @@ class ImprovedMainWindow(QMainWindow):
             ('standard', '기준 파일 (필수)', True),
             ('tax_invoice', '매입세금계산서 (필수)', True),
             ('tax_invoice_wis', '매입세금계산서(WIS) (필수)', True),
-            ('payment_ledger', '지불보조장 (선택)', False),
+            ('payment_ledger', '지불보조장 (필수)', True),
             ('processing_fee', '임가공비 (선택)', False)
         ]
 
@@ -262,45 +261,35 @@ class ImprovedMainWindow(QMainWindow):
         period_group = QGroupBox("📅 대사 기간 선택")
         period_layout = QVBoxLayout()
 
-        # 년도 선택
-        year_layout = QHBoxLayout()
-        year_layout.addWidget(QLabel("년도:"))
-        self.year_combo = QComboBox()
-        current_year = datetime.now().year
-        for year in range(current_year - 2, current_year + 1):
-            self.year_combo.addItem(str(year))
-        self.year_combo.setCurrentText(str(current_year))
-        year_layout.addWidget(self.year_combo)
-        year_layout.addStretch()
-        period_layout.addLayout(year_layout)
-
-        # 월 선택 (체크박스)
-        month_label = QLabel("월 선택 (복수 선택 가능):")
-        period_layout.addWidget(month_label)
-
-        month_grid = QGridLayout()
-        self.month_checkboxes = {}
-
-        from PyQt6.QtWidgets import QCheckBox
-        for i in range(12):
-            month = i + 1
-            checkbox = QCheckBox(f"{month}월")
-            checkbox.setChecked(True)  # 기본적으로 모두 선택
-            self.month_checkboxes[month] = checkbox
-            month_grid.addWidget(checkbox, i // 6, i % 6)
-
-        # 전체 선택/해제 버튼
-        btn_layout = QHBoxLayout()
-        btn_all = QPushButton("전체 선택")
-        btn_all.clicked.connect(lambda: self.toggle_months(True))
-        btn_none = QPushButton("전체 해제")
-        btn_none.clicked.connect(lambda: self.toggle_months(False))
-        btn_layout.addWidget(btn_all)
-        btn_layout.addWidget(btn_none)
-        btn_layout.addStretch()
-
-        period_layout.addLayout(month_grid)
-        period_layout.addLayout(btn_layout)
+        # 날짜 선택
+        date_layout = QHBoxLayout()
+        
+        # 시작일
+        date_layout.addWidget(QLabel("시작일:"))
+        self.start_date = QDateEdit()
+        self.start_date.setDate(QDate(2024, 1, 1))  # 2024-01-01
+        self.start_date.setCalendarPopup(True)
+        self.start_date.setDisplayFormat("yyyy-MM-dd")
+        date_layout.addWidget(self.start_date)
+        
+        date_layout.addWidget(QLabel("~"))
+        
+        # 종료일
+        date_layout.addWidget(QLabel("종료일:"))
+        self.end_date = QDateEdit()
+        self.end_date.setDate(QDate(2024, 6, 30))  # 2024-06-30
+        self.end_date.setCalendarPopup(True)
+        self.end_date.setDisplayFormat("yyyy-MM-dd")
+        date_layout.addWidget(self.end_date)
+        
+        date_layout.addStretch()
+        period_layout.addLayout(date_layout)
+        
+        # 날짜 유효성 설명
+        info_label = QLabel("* 대사 기간을 선택하세요 (노트북 기본값: 2024-01-01 ~ 2024-06-30)")
+        info_label.setStyleSheet("color: #666; font-size: 11px;")
+        period_layout.addWidget(info_label)
+        
         period_group.setLayout(period_layout)
         layout.addWidget(period_group)
 
@@ -395,9 +384,8 @@ class ImprovedMainWindow(QMainWindow):
             self.log("✅ 모든 필수 파일이 업로드되었습니다. 대사를 실행할 수 있습니다.")
 
     def toggle_months(self, checked: bool):
-        """월 전체 선택/해제"""
-        for checkbox in self.month_checkboxes.values():
-            checkbox.setChecked(checked)
+        """더 이상 사용되지 않음 (날짜 선택으로 변경)"""
+        pass
 
     def validate_all_files(self):
         """모든 파일 검증"""
@@ -414,25 +402,34 @@ class ImprovedMainWindow(QMainWindow):
         self.log("=== 파일 검증 완료 ===")
 
     def get_selected_months(self) -> list:
-        """선택된 년월 반환"""
-        year = self.year_combo.currentText()
-        selected_months = []
-
-        for month, checkbox in self.month_checkboxes.items():
-            if checkbox.isChecked():
-                selected_months.append(f"{year}{month:02d}")
-
-        return selected_months
+        """선택된 시작일/종료일 반환 (더 이상 월 기반이 아님)"""
+        # 이 메서드는 호환성을 위해 유지하지만 날짜 기반으로 변경
+        start_date = self.start_date.date().toPyDate()
+        end_date = self.end_date.date().toPyDate()
+        
+        # 유효성 검사
+        if start_date > end_date:
+            return []
+            
+        # 날짜 정보를 리스트로 반환 (기존 코드와의 호환성을 위해)
+        return [start_date, end_date]
 
     def execute_reconciliation(self):
         """대사 실행"""
-        selected_months = self.get_selected_months()
-        if not selected_months:
-            QMessageBox.warning(self, "경고", "최소 1개월 이상 선택해주세요.")
+        period = self.get_selected_months()  # 날짜 정보 가져오기
+        if not period or len(period) != 2:
+            QMessageBox.warning(self, "경고", "대사 기간을 선택해주세요.")
+            return
+            
+        start_date, end_date = period
+        
+        # 날짜 유효성 검사
+        if start_date > end_date:
+            QMessageBox.warning(self, "경고", "시작일이 종료일보다 늦을 수 없습니다.")
             return
 
         self.log(f"=== 대사 실행 시작 ===")
-        self.log(f"선택된 기간: {', '.join(selected_months)}")
+        self.log(f"선택된 기간: {start_date.strftime('%Y-%m-%d')} ~ {end_date.strftime('%Y-%m-%d')}")
 
         # UI 비활성화
         self.btn_execute.setEnabled(False)
@@ -440,7 +437,7 @@ class ImprovedMainWindow(QMainWindow):
         self.progress_bar.setVisible(True)
 
         # 스레드 실행
-        self.thread = ReconciliationThread(self.file_paths, selected_months)
+        self.thread = ReconciliationThread(self.file_paths, period)  # 날짜 정보 전달
         self.thread.progress.connect(self.update_progress)
         self.thread.message.connect(self.log)
         self.thread.finished.connect(self.on_reconciliation_finished)
