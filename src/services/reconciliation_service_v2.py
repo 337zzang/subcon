@@ -320,24 +320,276 @@ class ReconciliationService:
             
             if not df_candidates.empty:
                 first_index = df_candidates.index[0]
-                # 매핑 로직 (금액대사와 동일)
+                mapped_date = self.df_tax_new.at[first_index, '국세청작성일']
+                mapped_issue_date = self.df_tax_new.at[first_index, '국세청발급일']
+                mapped_supply = self.df_tax_new.at[first_index, '공급가액']
+                mapped_tax = self.df_tax_new.at[first_index, '세액']
+                
+                self.df_final_pivot.at[idx, '국세청작성일'] = mapped_date
+                self.df_final_pivot.at[idx, '국세청발급일'] = mapped_issue_date
+                self.df_final_pivot.at[idx, '국세청공급가액'] = mapped_supply
+                self.df_final_pivot.at[idx, '국세청세액'] = mapped_tax
                 self.df_final_pivot.at[idx, '구분키'] = "금액대사(수기확인)"
+                self.df_final_pivot.at[idx, '국세청승인번호'] = self.df_tax_new.at[first_index, '국세청승인번호']
+                self.df_final_pivot.at[idx, '업체사업자번호'] = self.df_tax_new.at[first_index, '업체사업자번호']
+                
+                self.df_tax_new.at[first_index, '대사여부'] = f"{row['key']}-1"
                 self.df_tax_new.at[first_index, '구분키'] = "금액대사(수기확인)"
     
     def _process_sequential_matching(self, tolerance):
-        """순차대사 (1:N 매칭)"""
-        # 노트북의 순차대사 로직 구현
-        pass
+        """순차대사 (1:N 매칭) - 노트북 로직에 따라 FIFO 방식으로 처리"""
+        for idx, row in self.df_final_pivot.iterrows():
+            if pd.notnull(row['국세청작성일']):
+                continue
+                
+            협력사코드_final = row['협력사코드']
+            년도_final = row['년']
+            월_final = row['월']
+            target_amount = row['최종매입금액']
+            
+            # 면과세구분에 따른 계산서구분
+            if row['면과세구분명'] in ["과세", "영세"]:
+                invoice_condition = "일반세금계산서"
+            else:
+                invoice_condition = "일반계산서"
+            
+            # 후보 찾기
+            candidates = self.df_tax_new[
+                (self.df_tax_new['협력사코드'] == 협력사코드_final) &
+                (self.df_tax_new['작성년도'] == 년도_final) &
+                (self.df_tax_new['작성월'] == 월_final) &
+                (self.df_tax_new['대사여부'] == "") &
+                (self.df_tax_new['계산서구분'] == invoice_condition)
+            ]
+            
+            if candidates.empty:
+                continue
+            
+            # 후보들을 국세청작성일 기준 오름차순(FIFO)로 정렬
+            candidates = candidates.sort_values(by='국세청작성일')
+            cumulative_sum = 0.0
+            selected_indices = []
+            
+            # FIFO 방식으로 누적합 계산
+            for cand_idx, cand_row in candidates.iterrows():
+                cumulative_sum += cand_row['공급가액']
+                selected_indices.append(cand_idx)
+                
+                # 누적합이 목표 금액과 일치하면 매칭
+                if np.abs(cumulative_sum - target_amount) < tolerance:
+                    # 날짜는 가장 빠른 것 사용
+                    mapped_date = candidates.loc[selected_indices, '국세청작성일'].min()
+                    mapped_issue_date = candidates.loc[selected_indices, '국세청발급일'].min()
+                    mapped_supply = cumulative_sum
+                    mapped_tax = candidates.loc[selected_indices, '세액'].sum()
+                    
+                    self.df_final_pivot.at[idx, '국세청작성일'] = mapped_date
+                    self.df_final_pivot.at[idx, '국세청발급일'] = mapped_issue_date
+                    self.df_final_pivot.at[idx, '국세청공급가액'] = mapped_supply
+                    self.df_final_pivot.at[idx, '국세청세액'] = mapped_tax
+                    self.df_final_pivot.at[idx, '구분키'] = "순차대사"
+                    
+                    # 첫 번째 매칭된 세금계산서 정보
+                    first_idx = selected_indices[0]
+                    self.df_final_pivot.at[idx, '국세청승인번호'] = candidates.loc[first_idx, '국세청승인번호']
+                    self.df_final_pivot.at[idx, '업체사업자번호'] = candidates.loc[first_idx, '업체사업자번호']
+                    
+                    # 선택된 각 세금계산서에 대사여부 표시
+                    for i, sel_idx in enumerate(selected_indices, start=1):
+                        self.df_tax_new.at[sel_idx, '대사여부'] = f"{row['key']}-{i}"
+                        self.df_tax_new.at[sel_idx, '구분키'] = f"순차대사-{i}"
+                    break
+            
+            # FIFO로 안되면 부분집합 합 찾기 (백트래킹)
+            else:
+                found, indices = self._find_subset_sum_all_combinations(
+                    candidates['공급가액'],
+                    target_amount,
+                    tolerance
+                )
+                
+                if found and len(indices) > 0:
+                    # 실제 인덱스로 변환
+                    actual_indices = [candidates.index[idx] for idx in indices]
+                    
+                    # 첫 번째 매칭된 세금계산서 정보를 pivot에 기록
+                    first_tax_idx = actual_indices[0]
+                    mapped_date = self.df_tax_new.at[first_tax_idx, '국세청작성일']
+                    mapped_issue_date = self.df_tax_new.at[first_tax_idx, '국세청발급일']
+                    
+                    # 합계 계산
+                    total_supply = sum(self.df_tax_new.at[idx, '공급가액'] for idx in actual_indices)
+                    total_tax = sum(self.df_tax_new.at[idx, '세액'] for idx in actual_indices)
+                    
+                    self.df_final_pivot.at[idx, '국세청작성일'] = mapped_date
+                    self.df_final_pivot.at[idx, '국세청발급일'] = mapped_issue_date
+                    self.df_final_pivot.at[idx, '국세청공급가액'] = total_supply
+                    self.df_final_pivot.at[idx, '국세청세액'] = total_tax
+                    self.df_final_pivot.at[idx, '구분키'] = "순차대사"
+                    self.df_final_pivot.at[idx, '국세청승인번호'] = self.df_tax_new.at[first_tax_idx, '국세청승인번호']
+                    self.df_final_pivot.at[idx, '업체사업자번호'] = self.df_tax_new.at[first_tax_idx, '업체사업자번호']
+                    
+                    # 선택된 각 세금계산서에 대사여부 표시
+                    for i, actual_idx in enumerate(actual_indices, start=1):
+                        self.df_tax_new.at[actual_idx, '대사여부'] = f"{row['key']}-{i}"
+                        self.df_tax_new.at[actual_idx, '구분키'] = f"순차대사-{i}"
     
     def _process_partial_matching(self, tolerance):
-        """부분대사"""
-        # 노트북의 부분대사 로직 구현
-        pass
+        """부분대사 - 금액이 더 큰 세금계산서와 1:1 매칭"""
+        for idx, row in self.df_final_pivot.iterrows():
+            if pd.notnull(row['국세청작성일']):
+                continue
+                
+            협력사코드_final = row['협력사코드']
+            년도_final = row['년']
+            월_final = row['월']
+            target_amount = row['최종매입금액']
+            
+            # 면과세구분에 따른 계산서구분
+            if row['면과세구분명'] in ["과세", "영세"]:
+                invoice_condition = "일반세금계산서"
+            else:
+                invoice_condition = "일반계산서"
+            
+            # 후보 찾기: 공급가액이 target_amount보다 큰 경우
+            candidates = self.df_tax_new[
+                (self.df_tax_new['협력사코드'] == 협력사코드_final) &
+                (self.df_tax_new['작성년도'] == 년도_final) &
+                (self.df_tax_new['작성월'] == 월_final) &
+                (self.df_tax_new['대사여부'] == "") &
+                (self.df_tax_new['계산서구분'] == invoice_condition) &
+                (self.df_tax_new['공급가액'] > target_amount)
+            ]
+            
+            if candidates.empty:
+                continue
+                
+            # 국세청발급일이 가장 빠른 것 선택 (오름차순 정렬)
+            candidates = candidates.sort_values(by='국세청발급일', ascending=True)
+            
+            # 첫 번째 후보 선택
+            candidate_index = candidates.index[0]
+            candidate_row = candidates.loc[candidate_index]
+            
+            # 매핑
+            mapped_date = candidate_row['국세청작성일']
+            mapped_issue_date = candidate_row['국세청발급일']
+            mapped_supply = candidate_row['공급가액']
+            mapped_tax = candidate_row['세액']
+            
+            self.df_final_pivot.at[idx, '국세청작성일'] = mapped_date
+            self.df_final_pivot.at[idx, '국세청발급일'] = mapped_issue_date
+            self.df_final_pivot.at[idx, '국세청공급가액'] = mapped_supply
+            self.df_final_pivot.at[idx, '국세청세액'] = mapped_tax
+            self.df_final_pivot.at[idx, '구분키'] = "부분대사"
+            self.df_final_pivot.at[idx, '국세청승인번호'] = candidate_row['국세청승인번호']
+            self.df_final_pivot.at[idx, '업체사업자번호'] = candidate_row['업체사업자번호']
+            
+            # 1:1 매칭이므로 번호는 -1로 표시
+            self.df_tax_new.at[candidate_index, '대사여부'] = f"{row['key']}-1"
+            self.df_tax_new.at[candidate_index, '구분키'] = "부분대사"
     
     def _process_partial_matching_manual(self, tolerance):
-        """부분대사(수기확인)"""
-        # 노트북의 부분대사(수기확인) 로직 구현
-        pass
+        """부분대사(수기확인) - 여러 후보 합산 후 매칭"""
+        for idx, row in self.df_final_pivot.iterrows():
+            if pd.notnull(row['국세청작성일']):
+                continue
+                
+            협력사코드_final = row['협력사코드']
+            년도_final = row['년']
+            월_final = row['월']
+            target_amount = row['최종매입금액']
+            
+            # 면과세구분에 따른 계산서구분
+            if row['면과세구분명'] in ["과세", "영세"]:
+                invoice_condition = "일반세금계산서"
+            else:
+                invoice_condition = "일반계산서"
+            
+            # 후보 찾기: 공급가액이 target_amount 이하인 경우
+            candidates = self.df_tax_new[
+                (self.df_tax_new['협력사코드'] == 협력사코드_final) &
+                (self.df_tax_new['작성년도'] == 년도_final) &
+                (self.df_tax_new['작성월'] == 월_final) &
+                (self.df_tax_new['대사여부'] == "") &
+                (self.df_tax_new['계산서구분'] == invoice_condition)
+            ]
+            candidates = candidates[candidates['공급가액'] <= target_amount]
+            
+            if candidates.empty:
+                continue
+                
+            # 국세청발급일이 늦은 순으로 정렬 (오름차순)
+            candidates = candidates.sort_values(by='국세청발급일', ascending=True)
+            
+            cumulative_sum = 0.0
+            selected_indices = []
+            
+            # 누적 합이 target_amount를 초과할 때까지 선택
+            for cand_idx, cand_row in candidates.iterrows():
+                cumulative_sum += cand_row['공급가액']
+                selected_indices.append(cand_idx)
+                if cumulative_sum > target_amount:
+                    break
+            
+            # 누적 합이 target_amount보다 큰 경우에만 매칭
+            if cumulative_sum > target_amount and len(selected_indices) > 0:
+                # 대표 날짜는 가장 늦은 날짜로 설정
+                representative_date = candidates.loc[selected_indices, '국세청작성일'].max()
+                representative_issue_date = candidates.loc[selected_indices, '국세청발급일'].max()
+                mapped_supply = cumulative_sum
+                mapped_tax = candidates.loc[selected_indices, '세액'].sum()
+                
+                self.df_final_pivot.at[idx, '국세청작성일'] = representative_date
+                self.df_final_pivot.at[idx, '국세청발급일'] = representative_issue_date
+                self.df_final_pivot.at[idx, '국세청공급가액'] = mapped_supply
+                self.df_final_pivot.at[idx, '국세청세액'] = mapped_tax
+                self.df_final_pivot.at[idx, '구분키'] = "수기확인"
+                
+                # 첫 번째 매칭된 것의 정보 사용
+                first_idx = selected_indices[0]
+                self.df_final_pivot.at[idx, '국세청승인번호'] = candidates.loc[first_idx, '국세청승인번호']
+                self.df_final_pivot.at[idx, '업체사업자번호'] = candidates.loc[first_idx, '업체사업자번호']
+                
+                # 선택된 각 세금계산서에 대사여부 표시
+                for i, sel_idx in enumerate(selected_indices, start=1):
+                    self.df_tax_new.at[sel_idx, '대사여부'] = f"{row['key']}-{i}"
+                    self.df_tax_new.at[sel_idx, '구분키'] = f"수기확인-{i}"
+    
+    def _find_subset_sum_all_combinations(self, amounts, target, tolerance=1e-6):
+        """
+        부분집합의 합이 target과 일치하는 인덱스 찾기
+        DFS를 사용한 백트래킹 구현
+        
+        amounts: 금액이 들어있는 Series
+        target: 목표 금액
+        tolerance: float 비교를 위한 허용 오차
+        반환값: (True, [인덱스 리스트]) 또는 (False, [])
+        """
+        # Series를 (인덱스, 금액) 튜플 리스트로 변환
+        candidate_items = [(idx, amt) for idx, amt in amounts.items()]
+        result_container = {'found': False, 'indices': []}
+        
+        def dfs(start_idx, current_sum, chosen_indices):
+            if result_container['found']:
+                return
+            if np.abs(current_sum - target) < tolerance:
+                result_container['found'] = True
+                result_container['indices'] = chosen_indices[:]
+                return
+            if start_idx >= len(candidate_items):
+                return
+            if current_sum > target:
+                return
+                
+            # 현재 원소 포함
+            cand_idx, cand_amt = candidate_items[start_idx]
+            dfs(start_idx + 1, current_sum + cand_amt, chosen_indices + [cand_idx])
+            # 현재 원소 미포함
+            dfs(start_idx + 1, current_sum, chosen_indices)
+            
+        dfs(0, 0.0, [])
+        return (True, result_container['indices']) if result_container['found'] else (False, [])
     
     def _process_payment_book(self):
         """지불보조장 대사"""
