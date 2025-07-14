@@ -155,7 +155,7 @@
       "id": "5e4decbc-9955-46d8-92bc-b95700567c61",
       "name": "매입대사 시스템 추가 기능 구현",
       "description": "",
-      "status": "draft",
+      "status": "archived",
       "tasks": [
         {
           "id": "a247d3b4-c726-43b6-9771-43ce22f63d6a",
@@ -176,23 +176,25 @@
           "id": "8b1c725c-6c70-4801-af84-eb9f741bba92",
           "title": "대사 결과 검증 로직 구현",
           "description": "",
-          "status": "todo",
+          "status": "completed",
           "created_at": "2025-07-14T14:04:51.675094+09:00",
-          "updated_at": "2025-07-14T14:04:51.675094+09:00",
-          "started_at": null,
-          "completed_at": null,
+          "updated_at": "2025-07-14T16:14:49.077118",
+          "started_at": "2025-07-14T16:08:41.316732",
+          "completed_at": "2025-07-14T16:14:49.077118",
           "duration": null,
-          "notes": [],
+          "notes": [
+            "[완료] 대사 결과 검증 로직 구현 완료. 파일 캐싱 통합, 키 통일, 검증 로직 추가"
+          ],
           "outputs": {}
         },
         {
           "id": "46c96d1a-3dd0-4326-9092-c7d270b9c3f1",
           "title": "예외 처리 강화",
           "description": "",
-          "status": "todo",
+          "status": "in_progress",
           "created_at": "2025-07-14T14:04:51.680111+09:00",
-          "updated_at": "2025-07-14T14:04:51.680111+09:00",
-          "started_at": null,
+          "updated_at": "2025-07-14T16:21:18.821792",
+          "started_at": "2025-07-14T16:21:18.821792",
           "completed_at": null,
           "duration": null,
           "notes": [],
@@ -206,11 +208,108 @@
       "archived_at": null,
       "stats": {},
       "metadata": {}
+    },
+    {
+      "id": "a9f8f020-d388-42d0-82b8-c48cb773d425",
+      "name": "날짜 처리 및 캐시 기능 수정",
+      "description": "",
+      "status": "archived",
+      "tasks": [
+        {
+          "id": "8aa64334-e824-4d6c-a6df-9ddb167e495f",
+          "title": "국세청작성일 DateTime 처리 오류 수정",
+          "description": "",
+          "status": "in_progress",
+          "created_at": "2025-07-14T16:36:01.018332+09:00",
+          "updated_at": "2025-07-14T16:36:06.727795",
+          "started_at": "2025-07-14T16:36:06.727795",
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        },
+        {
+          "id": "f016ba9e-0ec5-445d-bcdc-74920322d2e5",
+          "title": "캐시 저장 기능 구현",
+          "description": "",
+          "status": "todo",
+          "created_at": "2025-07-14T16:36:01.022331+09:00",
+          "updated_at": "2025-07-14T16:36:01.022331+09:00",
+          "started_at": null,
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        },
+        {
+          "id": "82884d21-4e19-477c-930a-1f4360e5c0f8",
+          "title": "날짜 변환 경고 해결",
+          "description": "",
+          "status": "todo",
+          "created_at": "2025-07-14T16:36:01.027330+09:00",
+          "updated_at": "2025-07-14T16:36:01.027330+09:00",
+          "started_at": null,
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        }
+      ],
+      "current_task_index": 0,
+      "created_at": "2025-07-14T16:35:52.584324+09:00",
+      "updated_at": "2025-07-14T16:35:52.584324+09:00",
+      "completed_at": null,
+      "archived_at": null,
+      "stats": {},
+      "metadata": {}
+    },
+    {
+      "id": "a5eeb012-0fb2-4bd6-9d2a-f5a6f2a8b871",
+      "name": "캐시 기능 및 날짜 처리 오류 수정",
+      "description": "",
+      "status": "draft",
+      "tasks": [
+        {
+          "id": "5274bccb-e66f-42a5-ad0b-6887a80be8e1",
+          "title": "캐시에서 데이터 로드가 안 되는 문제 분석 및 수정",
+          "description": "",
+          "status": "completed",
+          "created_at": "2025-07-14T16:39:53.158599+09:00",
+          "updated_at": "2025-07-14T16:57:28.210853",
+          "started_at": "2025-07-14T16:40:00.080143",
+          "completed_at": "2025-07-14T16:57:28.210853",
+          "duration": null,
+          "notes": [
+            "[완료] 캐시 문제 해결 완료. 동적 컬럼 매핑 및 날짜 처리 오류 수정 완료."
+          ],
+          "outputs": {}
+        },
+        {
+          "id": "b79483ad-3438-4ecc-8163-7951fff36fe0",
+          "title": "국세청작성일 날짜 처리 오류 분석 및 수정",
+          "description": "",
+          "status": "todo",
+          "created_at": "2025-07-14T16:39:53.163599+09:00",
+          "updated_at": "2025-07-14T16:39:53.163599+09:00",
+          "started_at": null,
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        }
+      ],
+      "current_task_index": 0,
+      "created_at": "2025-07-14T16:39:53.152601+09:00",
+      "updated_at": "2025-07-14T16:39:53.152601+09:00",
+      "completed_at": null,
+      "archived_at": null,
+      "stats": {},
+      "metadata": {}
     }
   ],
-  "active_plan_id": "5e4decbc-9955-46d8-92bc-b95700567c61",
+  "active_plan_id": "a5eeb012-0fb2-4bd6-9d2a-f5a6f2a8b871",
   "events_file": "workflow_events.json",
   "version": "3.0.0",
   "project_name": "subcon",
-  "last_saved": "2025-07-14T14:10:53.554769"
+  "last_saved": "2025-07-14T16:57:28.218846"
 }

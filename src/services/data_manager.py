@@ -7,7 +7,7 @@ import pandas as pd
 from collections import defaultdict
 import os
 
-from ..models import (
+from src.models import (
     Supplier, SupplierProduct, Purchase, PurchaseSummary,
     TaxInvoice, TaxInvoiceWIS, Payment, PaymentLedger,
     ProcessingFee

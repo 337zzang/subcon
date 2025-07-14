@@ -9,7 +9,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from kfunction import read_excel_data
 
-from ..models import Supplier, Purchase, Payment, TaxInvoice
+from src.models import Supplier, Purchase, Payment, TaxInvoice
 
 
 class ExcelService:

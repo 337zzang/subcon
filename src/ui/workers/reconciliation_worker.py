@@ -12,7 +12,8 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
 from kfunction import read_excel_data
 
-from ...services.reconciliation_service_v2 import ReconciliationService
+from src.services.reconciliation_service_v2 import ReconciliationService
+from src.services.reconciliation_validator import ReconciliationValidator
 
 
 class ReconciliationWorker(QThread):
@@ -114,6 +115,40 @@ class ReconciliationWorker(QThread):
             
             if not self.is_running:
                 return
+                
+            # 4-1. 대사 결과 검증
+            self.message.emit("🔍 대사 결과 검증 중...")
+            self.progress.emit(95)
+            
+            validator = ReconciliationValidator()
+            
+            # 검증용 데이터 준비
+            result_data = {
+                'final_merged': service.final_merged_df,
+                'tax_new': service.df_tax_new,
+                'book_filtered': service.filtered_df_book
+            }
+            
+            original_data = {
+                'purchase_detail': service.df,
+                'standard': service.df_standard,
+                'tax_invoice': service.df_tax_hifi,
+                'payment_ledger': service.df_book,
+                'tax_invoice_wis': service.df_num
+            }
+            
+            # 검증 실행
+            validation_report = validator.validate_result(result_data, original_data)
+            
+            # 검증 결과를 results에 추가
+            results['validation'] = validation_report
+            
+            # 검증 보고서 저장
+            if validation_report['status'] == 'FAILED':
+                self.error.emit("검증 실패: " + ", ".join(validation_report['errors']))
+                return
+            elif validation_report['warnings']:
+                self.message.emit(f"⚠️ 검증 경고: {len(validation_report['warnings'])}건")
                 
             # 5. 완료
             self.message.emit("✅ 대사 처리 완료!")

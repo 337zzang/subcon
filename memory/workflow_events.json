@@ -341,6 +341,223 @@
         "title": "match_tax_and_book 함수 통합 - 지불보조장 대사 기능 구현",
         "note": "match_tax_and_book 함수 통합 완료 - 지불보조장 대사 기능 구현"
       }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "8b1c725c-6c70-4801-af84-eb9f741bba92",
+      "timestamp": "2025-07-14T16:08:41.316732",
+      "data": {
+        "from": "todo",
+        "to": "in_progress",
+        "task_name": "대사 결과 검증 로직 구현",
+        "task_description": ""
+      }
+    },
+    {
+      "type": "task_started",
+      "entity_id": "8b1c725c-6c70-4801-af84-eb9f741bba92",
+      "timestamp": "2025-07-14T16:08:41.318731",
+      "data": {
+        "title": "대사 결과 검증 로직 구현"
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "8b1c725c-6c70-4801-af84-eb9f741bba92",
+      "timestamp": "2025-07-14T16:14:49.077118",
+      "data": {
+        "from": "in_progress",
+        "to": "completed",
+        "task_name": "대사 결과 검증 로직 구현",
+        "note": "대사 결과 검증 로직 구현 완료. 파일 캐싱 통합, 키 통일, 검증 로직 추가",
+        "duration": "6분"
+      }
+    },
+    {
+      "type": "task_completed",
+      "entity_id": "8b1c725c-6c70-4801-af84-eb9f741bba92",
+      "timestamp": "2025-07-14T16:14:49.079117",
+      "data": {
+        "title": "대사 결과 검증 로직 구현",
+        "note": "대사 결과 검증 로직 구현 완료. 파일 캐싱 통합, 키 통일, 검증 로직 추가"
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "46c96d1a-3dd0-4326-9092-c7d270b9c3f1",
+      "timestamp": "2025-07-14T16:21:18.821792",
+      "data": {
+        "from": "todo",
+        "to": "in_progress",
+        "task_name": "예외 처리 강화",
+        "task_description": ""
+      }
+    },
+    {
+      "type": "task_started",
+      "entity_id": "46c96d1a-3dd0-4326-9092-c7d270b9c3f1",
+      "timestamp": "2025-07-14T16:21:18.823792",
+      "data": {
+        "title": "예외 처리 강화"
+      }
+    },
+    {
+      "type": "plan_archived",
+      "entity_id": "5e4decbc-9955-46d8-92bc-b95700567c61",
+      "timestamp": "2025-07-14T16:35:46.357029",
+      "data": {
+        "name": "매입대사 시스템 추가 기능 구현"
+      }
+    },
+    {
+      "type": "workflow_created",
+      "entity_id": "a9f8f020-d388-42d0-82b8-c48cb773d425",
+      "timestamp": "2025-07-14T16:35:52.584324",
+      "data": {
+        "name": "날짜 처리 및 캐시 기능 수정",
+        "description": ""
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "a9f8f020-d388-42d0-82b8-c48cb773d425",
+      "timestamp": "2025-07-14T16:35:52.586325",
+      "data": {
+        "from": "draft",
+        "to": "active",
+        "workflow_id": "a9f8f020-d388-42d0-82b8-c48cb773d425"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "8aa64334-e824-4d6c-a6df-9ddb167e495f",
+      "timestamp": "2025-07-14T16:36:01.018332",
+      "data": {
+        "title": "국세청작성일 DateTime 처리 오류 수정",
+        "workflow_id": "a9f8f020-d388-42d0-82b8-c48cb773d425"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "f016ba9e-0ec5-445d-bcdc-74920322d2e5",
+      "timestamp": "2025-07-14T16:36:01.022331",
+      "data": {
+        "title": "캐시 저장 기능 구현",
+        "workflow_id": "a9f8f020-d388-42d0-82b8-c48cb773d425"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "82884d21-4e19-477c-930a-1f4360e5c0f8",
+      "timestamp": "2025-07-14T16:36:01.027330",
+      "data": {
+        "title": "날짜 변환 경고 해결",
+        "workflow_id": "a9f8f020-d388-42d0-82b8-c48cb773d425"
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "8aa64334-e824-4d6c-a6df-9ddb167e495f",
+      "timestamp": "2025-07-14T16:36:06.727795",
+      "data": {
+        "from": "todo",
+        "to": "in_progress",
+        "task_name": "국세청작성일 DateTime 처리 오류 수정",
+        "task_description": ""
+      }
+    },
+    {
+      "type": "task_started",
+      "entity_id": "8aa64334-e824-4d6c-a6df-9ddb167e495f",
+      "timestamp": "2025-07-14T16:36:06.729791",
+      "data": {
+        "title": "국세청작성일 DateTime 처리 오류 수정"
+      }
+    },
+    {
+      "type": "plan_archived",
+      "entity_id": "a9f8f020-d388-42d0-82b8-c48cb773d425",
+      "timestamp": "2025-07-14T16:39:45.899026",
+      "data": {
+        "name": "날짜 처리 및 캐시 기능 수정"
+      }
+    },
+    {
+      "type": "workflow_created",
+      "entity_id": "a5eeb012-0fb2-4bd6-9d2a-f5a6f2a8b871",
+      "timestamp": "2025-07-14T16:39:53.152601",
+      "data": {
+        "name": "캐시 기능 및 날짜 처리 오류 수정",
+        "description": ""
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "a5eeb012-0fb2-4bd6-9d2a-f5a6f2a8b871",
+      "timestamp": "2025-07-14T16:39:53.154600",
+      "data": {
+        "from": "draft",
+        "to": "active",
+        "workflow_id": "a5eeb012-0fb2-4bd6-9d2a-f5a6f2a8b871"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "5274bccb-e66f-42a5-ad0b-6887a80be8e1",
+      "timestamp": "2025-07-14T16:39:53.158599",
+      "data": {
+        "title": "캐시에서 데이터 로드가 안 되는 문제 분석 및 수정",
+        "workflow_id": "a5eeb012-0fb2-4bd6-9d2a-f5a6f2a8b871"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "b79483ad-3438-4ecc-8163-7951fff36fe0",
+      "timestamp": "2025-07-14T16:39:53.163599",
+      "data": {
+        "title": "국세청작성일 날짜 처리 오류 분석 및 수정",
+        "workflow_id": "a5eeb012-0fb2-4bd6-9d2a-f5a6f2a8b871"
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "5274bccb-e66f-42a5-ad0b-6887a80be8e1",
+      "timestamp": "2025-07-14T16:40:00.080143",
+      "data": {
+        "from": "todo",
+        "to": "in_progress",
+        "task_name": "캐시에서 데이터 로드가 안 되는 문제 분석 및 수정",
+        "task_description": ""
+      }
+    },
+    {
+      "type": "task_started",
+      "entity_id": "5274bccb-e66f-42a5-ad0b-6887a80be8e1",
+      "timestamp": "2025-07-14T16:40:00.083143",
+      "data": {
+        "title": "캐시에서 데이터 로드가 안 되는 문제 분석 및 수정"
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "5274bccb-e66f-42a5-ad0b-6887a80be8e1",
+      "timestamp": "2025-07-14T16:57:28.210853",
+      "data": {
+        "from": "in_progress",
+        "to": "completed",
+        "task_name": "캐시에서 데이터 로드가 안 되는 문제 분석 및 수정",
+        "note": "캐시 문제 해결 완료. 동적 컬럼 매핑 및 날짜 처리 오류 수정 완료.",
+        "duration": "17분"
+      }
+    },
+    {
+      "type": "task_completed",
+      "entity_id": "5274bccb-e66f-42a5-ad0b-6887a80be8e1",
+      "timestamp": "2025-07-14T16:57:28.214845",
+      "data": {
+        "title": "캐시에서 데이터 로드가 안 되는 문제 분석 및 수정",
+        "note": "캐시 문제 해결 완료. 동적 컬럼 매핑 및 날짜 처리 오류 수정 완료."
+      }
     }
   ]
 }

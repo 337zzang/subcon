@@ -16,10 +16,10 @@ import pandas as pd
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from kfunction import read_excel_data
 
-# 프로젝트 서비스 import
-from ..services.data_manager import DataManager
-from ..services.excel_service import ExcelService
-from ..services.reconciliation_service_v2 import ReconciliationService
+# 프로젝트 서비스 import - 절대 임포트로 변경
+from src.services.data_manager import DataManager
+from src.services.excel_service import ExcelService
+from src.services.reconciliation_service_v2 import ReconciliationService
 
 
 class FileUploadThread(QThread):

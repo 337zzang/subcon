@@ -22,9 +22,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 from kfunction import read_excel_data
 
 from src.services.excel_service import ExcelService
-from ..services.reconciliation_service_v2 import ReconciliationService
-from .workers.reconciliation_worker import ReconciliationWorker
-from .widgets.progress_dialog import ProgressDialog
+from src.services.reconciliation_service_v2 import ReconciliationService
+from src.ui.workers.reconciliation_worker import ReconciliationWorker
+from src.ui.widgets.progress_dialog import ProgressDialog
 
 # 전역 큐와 결과 딕셔너리
 excel_read_queue = queue.Queue()

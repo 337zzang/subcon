@@ -12,7 +12,7 @@ from PyQt6.QtGui import QFont
 from typing import Optional
 from decimal import Decimal
 
-from ...services.data_manager import DataManager
+from src.services.data_manager import DataManager
 
 class AnalysisWidget(QWidget):
     """데이터 분석 위젯"""

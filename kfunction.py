@@ -1,5 +1,22 @@
 import win32com.client as win32
 import pandas as pd, os, gc
+import sys
+
+# DataManager 싱글톤 인스턴스
+_data_manager = None
+
+def get_data_manager():
+    """DataManager 싱글톤 인스턴스 반환"""
+    global _data_manager
+    if _data_manager is None:
+        # src 경로를 sys.path에 추가
+        src_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src')
+        if src_path not in sys.path:
+            sys.path.insert(0, src_path)
+        
+        from services.data_manager import DataManager
+        _data_manager = DataManager()
+    return _data_manager
 
 def read_excel_data(
     file_path: str,
@@ -11,6 +28,13 @@ def read_excel_data(
     - sheet: 0‑기준 인덱스(int) 또는 정확한 시트명(str)
     - header: pandas.read_excel과 동일하게 단일/다중 헤더 지원
     """
+    # 캐시 확인
+    dm = get_data_manager()
+    cached_data = dm.get_cached_data(file_path)
+    if cached_data is not None:
+        print(f"[INFO] '{file_path}' 캐시에서 로드")
+        return cached_data.copy()
+    
     print(f"[INFO] '{file_path}' 읽는 중…")
     excel, wb = None, None
     try:
@@ -61,6 +85,11 @@ def read_excel_data(
             except (TypeError, ValueError, AttributeError) as e:
                 # 변환할 수 없는 컬럼은 원본 유지
                 continue
+        
+        # 캐시에 저장
+        dm.cache_file_data(file_path, df)
+        print(f"[INFO] '{file_path}' 캐시에 저장")
+        
         return df
 
     finally:

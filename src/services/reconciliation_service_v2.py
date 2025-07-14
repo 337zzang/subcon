@@ -14,7 +14,7 @@ from pathlib import Path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from kfunction import read_excel_data
 
-from ..models.reconciliation_models import DataContainer
+from src.models.reconciliation_models import DataContainer
 
 
 class ReconciliationService:
@@ -307,6 +307,22 @@ class ReconciliationService:
         
         return s.apply(remove_tz_element)
     
+    def _find_date_column(self, df, keyword):
+        """날짜 컬럼을 동적으로 찾는 헬퍼 함수"""
+        # 첫 번째 시도: 완전 일치 + nan 없음
+        for col in df.columns:
+            if str(col) == keyword:
+                return col
+        # 두 번째 시도: nan이 없는 컬럼 우선
+        for col in df.columns:
+            if keyword in str(col) and 'nan' not in str(col):
+                return col
+        # 세 번째 시도: nan이 있어도 키워드가 있으면 반환
+        for col in df.columns:
+            if keyword in str(col):
+                return col
+        return None
+    
     def _process_tax_invoices(self):
         """세금계산서 데이터 처리 - 노트북 로직"""
         try:
@@ -345,12 +361,24 @@ class ReconciliationService:
             except Exception as e:
                 raise ValueError(f"매입세금계산서 헤더 처리 실패: {str(e)}")
             
-            # 컬럼 매핑
+            # 동적 컬럼 매핑
+            작성일_컬럼 = self._find_date_column(self.df_tax_hifi, '작성일')
+            발급일_컬럼 = self._find_date_column(self.df_tax_hifi, '발급일')
+            
+            if not 작성일_컬럼:
+                print("⚠️ 작성일 컬럼을 찾을 수 없습니다. 기본값 사용")
+                작성일_컬럼 = 'nan_작성일'
+            if not 발급일_컬럼:
+                print("⚠️ 발급일 컬럼을 찾을 수 없습니다. 기본값 사용")
+                발급일_컬럼 = 'nan_발급일'
+                
+            print(f"✅ 컬럼 매핑: 작성일='{작성일_컬럼}', 발급일='{발급일_컬럼}'")
+            
             column_mapping = {
                 '국세청승인번호': '국세청승인번호',
                 '업체사업자번호': '업체사업자번호',
-                '국세청작성일': 'nan_작성일',
-                '국세청발급일': 'nan_발급일'
+                '국세청작성일': 작성일_컬럼,
+                '국세청발급일': 발급일_컬럼
             }
             
             # lookup_df 생성
@@ -1293,14 +1321,21 @@ class ReconciliationService:
                 매입년월 = str(int(row['년월']))
                 
                 if 작성년월 != 매입년월:
-                    # 날짜 차이 계산
-                    date_diff = pd.to_datetime(작성년월 + '01') - pd.to_datetime(매입년월 + '01')
-                    months_diff = date_diff.days / 30
-                    
-                    if abs(months_diff) > 2:
-                        result['warnings'].append(
-                            f"행 {idx}: 작성년월({작성년월})과 매입년월({매입년월}) 차이가 2개월 초과"
-                        )
+                    # 날짜 차이 계산 (None 체크 추가)
+                    try:
+                        작성일자 = pd.to_datetime(작성년월 + '01')
+                        매입일자 = pd.to_datetime(매입년월 + '01')
+                        
+                        if pd.notna(작성일자) and pd.notna(매입일자):
+                            date_diff = 작성일자 - 매입일자
+                            months_diff = date_diff.days / 30
+                            
+                            if abs(months_diff) > 2:
+                                result['warnings'].append(
+                                    f"행 {idx}: 작성년월({작성년월})과 매입년월({매입년월}) 차이가 2개월 초과"
+                                )
+                    except Exception as e:
+                        print(f"⚠️ 날짜 차이 계산 오류 (행 {idx}): {str(e)}")
                         
         return result
     
