@@ -5,9 +5,10 @@ from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
     QPushButton, QLabel, QLineEdit, QComboBox, QGroupBox,
     QFileDialog, QMessageBox, QProgressBar, QTableWidget,
-    QTableWidgetItem, QTextEdit, QSplitter, QHeaderView, QDateEdit
+    QTableWidgetItem, QTextEdit, QSplitter, QHeaderView, QDateEdit,
+    QDialog, QDialogButtonBox
 )
-from PyQt6.QtCore import Qt, pyqtSignal, QThread, QTimer, QDate
+from PyQt6.QtCore import Qt, pyqtSignal, QThread, QTimer, QDate, QSettings
 from PyQt6.QtGui import QFont, QPalette, QColor
 import pandas as pd
 from typing import Dict, Optional
@@ -58,10 +59,15 @@ class FileUploadWidget(QWidget):
 
     def select_file(self):
         """파일 선택"""
+        # 부모 윈도우에서 기본 폴더 가져오기
+        default_folder = ""
+        if hasattr(self.window(), 'upload_folder'):
+            default_folder = self.window().upload_folder
+            
         file_path, _ = QFileDialog.getOpenFileName(
             self,
             f"{self.label.text()} 선택",
-            "",
+            default_folder,
             "Excel Files (*.xlsx *.xls);;All Files (*.*)"
         )
 
@@ -157,6 +163,12 @@ class ImprovedMainWindow(QMainWindow):
         super().__init__()
         self.file_paths = {}
         self.current_results = None
+        
+        # 설정 초기화
+        self.settings = QSettings('SubconSystem', 'ReconciliationApp')
+        self.upload_folder = self.settings.value('upload_folder', '')
+        self.download_folder = self.settings.value('download_folder', '')
+        
         self.init_ui()
 
     def init_ui(self):
@@ -224,6 +236,14 @@ class ImprovedMainWindow(QMainWindow):
         self.progress_bar = QProgressBar()
         self.progress_bar.setVisible(False)
         self.status_bar.addPermanentWidget(self.progress_bar)
+        
+        # 설정 로드 확인
+        if self.upload_folder or self.download_folder:
+            self.log("📁 기본 폴더 설정이 로드되었습니다.")
+            if self.upload_folder:
+                self.log(f"  - 업로드: {self.upload_folder}")
+            if self.download_folder:
+                self.log(f"  - 다운로드: {self.download_folder}")
 
     def create_left_panel(self) -> QWidget:
         """왼쪽 패널 생성 (파일 업로드)"""
@@ -301,6 +321,14 @@ class ImprovedMainWindow(QMainWindow):
         # 3. 실행 버튼
         execute_group = QGroupBox("⚡ 실행")
         execute_layout = QVBoxLayout()
+        
+        # 설정 버튼
+        self.btn_settings = QPushButton("⚙️ 기본 폴더 설정")
+        self.btn_settings.clicked.connect(self.show_settings_dialog)
+        execute_layout.addWidget(self.btn_settings)
+        
+        # 구분선
+        execute_layout.addWidget(QLabel(""))
 
         self.btn_validate = QPushButton("🔍 파일 검증")
         self.btn_validate.clicked.connect(self.validate_all_files)
@@ -527,11 +555,16 @@ class ImprovedMainWindow(QMainWindow):
         # 저장 경로 선택
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         default_name = f"매입대사결과_{timestamp}.xlsx"
+        
+        # 기본 다운로드 폴더 설정
+        default_path = default_name
+        if self.download_folder:
+            default_path = str(Path(self.download_folder) / default_name)
 
         file_path, _ = QFileDialog.getSaveFileName(
             self,
             "결과 저장",
-            default_name,
+            default_path,
             "Excel Files (*.xlsx)"
         )
 
@@ -569,3 +602,108 @@ class ImprovedMainWindow(QMainWindow):
         """로그 메시지 추가"""
         timestamp = datetime.now().strftime("%H:%M:%S")
         self.log_text.append(f"[{timestamp}] {message}")
+        
+    def show_settings_dialog(self):
+        """설정 다이얼로그 표시"""
+        dialog = SettingsDialog(self, self.upload_folder, self.download_folder)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self.upload_folder = dialog.upload_folder
+            self.download_folder = dialog.download_folder
+            
+            # 설정 저장
+            self.settings.setValue('upload_folder', self.upload_folder)
+            self.settings.setValue('download_folder', self.download_folder)
+            
+            self.log(f"✅ 설정이 저장되었습니다.")
+            self.log(f"  - 업로드 폴더: {self.upload_folder or '(미설정)'}")
+            self.log(f"  - 다운로드 폴더: {self.download_folder or '(미설정)'}")
+
+
+class SettingsDialog(QDialog):
+    """설정 다이얼로그"""
+    
+    def __init__(self, parent=None, upload_folder='', download_folder=''):
+        super().__init__(parent)
+        self.upload_folder = upload_folder
+        self.download_folder = download_folder
+        self.init_ui()
+        
+    def init_ui(self):
+        """UI 초기화"""
+        self.setWindowTitle("기본 폴더 설정")
+        self.setModal(True)
+        self.setMinimumWidth(500)
+        
+        layout = QVBoxLayout()
+        
+        # 설명
+        info_label = QLabel("파일 업로드와 다운로드의 기본 폴더를 설정합니다.")
+        info_label.setStyleSheet("color: #666; margin-bottom: 10px;")
+        layout.addWidget(info_label)
+        
+        # 업로드 폴더 설정
+        upload_group = QGroupBox("파일 업로드 기본 폴더")
+        upload_layout = QHBoxLayout()
+        
+        self.upload_edit = QLineEdit(self.upload_folder)
+        self.upload_edit.setPlaceholderText("업로드할 파일의 기본 위치")
+        upload_layout.addWidget(self.upload_edit)
+        
+        upload_btn = QPushButton("찾아보기...")
+        upload_btn.clicked.connect(self.select_upload_folder)
+        upload_layout.addWidget(upload_btn)
+        
+        upload_group.setLayout(upload_layout)
+        layout.addWidget(upload_group)
+        
+        # 다운로드 폴더 설정
+        download_group = QGroupBox("결과 다운로드 기본 폴더")
+        download_layout = QHBoxLayout()
+        
+        self.download_edit = QLineEdit(self.download_folder)
+        self.download_edit.setPlaceholderText("결과 파일을 저장할 기본 위치")
+        download_layout.addWidget(self.download_edit)
+        
+        download_btn = QPushButton("찾아보기...")
+        download_btn.clicked.connect(self.select_download_folder)
+        download_layout.addWidget(download_btn)
+        
+        download_group.setLayout(download_layout)
+        layout.addWidget(download_group)
+        
+        # 버튼
+        button_box = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | 
+            QDialogButtonBox.StandardButton.Cancel
+        )
+        button_box.accepted.connect(self.accept)
+        button_box.rejected.connect(self.reject)
+        layout.addWidget(button_box)
+        
+        self.setLayout(layout)
+        
+    def select_upload_folder(self):
+        """업로드 폴더 선택"""
+        folder = QFileDialog.getExistingDirectory(
+            self,
+            "업로드 기본 폴더 선택",
+            self.upload_edit.text() or ""
+        )
+        if folder:
+            self.upload_edit.setText(folder)
+            
+    def select_download_folder(self):
+        """다운로드 폴더 선택"""
+        folder = QFileDialog.getExistingDirectory(
+            self,
+            "다운로드 기본 폴더 선택",
+            self.download_edit.text() or ""
+        )
+        if folder:
+            self.download_edit.setText(folder)
+            
+    def accept(self):
+        """확인 버튼 클릭"""
+        self.upload_folder = self.upload_edit.text()
+        self.download_folder = self.download_edit.text()
+        super().accept()
