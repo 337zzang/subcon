@@ -3,6 +3,6 @@
 """
 from .excel_service import ExcelService
 from .data_manager import DataManager
-from .reconciliation_service import ReconciliationService
+from .reconciliation_service_v2 import ReconciliationService
 
 __all__ = ['ExcelService', 'DataManager', 'ReconciliationService']

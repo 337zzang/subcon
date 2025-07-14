@@ -12,7 +12,7 @@ from pathlib import Path
 from ..models.reconciliation_models import DataContainer
 
 
-class ReconciliationServiceV2:
+class ReconciliationService:
     """매입대사2.ipynb의 로직을 그대로 이식한 서비스"""
     
     def __init__(self):

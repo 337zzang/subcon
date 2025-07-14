@@ -1,6 +1,6 @@
 import sys
 from PyQt6.QtWidgets import QApplication
-from src.ui.reconciliation_main_window import UploadMainWindow
+from src.ui.upload_main_window import UploadMainWindow
 
 
 def main():

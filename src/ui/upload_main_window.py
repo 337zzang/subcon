@@ -15,7 +15,7 @@ import pandas as pd
 # 프로젝트 서비스 import
 from ..services.data_manager import DataManager
 from ..services.excel_service import ExcelService
-from ..services.reconciliation_service import ReconciliationService
+from ..services.reconciliation_service_v2 import ReconciliationService
 
 
 class ReconciliationThread(QThread):
