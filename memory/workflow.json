@@ -288,10 +288,10 @@
           "id": "b79483ad-3438-4ecc-8163-7951fff36fe0",
           "title": "국세청작성일 날짜 처리 오류 분석 및 수정",
           "description": "",
-          "status": "todo",
+          "status": "in_progress",
           "created_at": "2025-07-14T16:39:53.163599+09:00",
-          "updated_at": "2025-07-14T16:39:53.163599+09:00",
-          "started_at": null,
+          "updated_at": "2025-07-14T16:58:28.472966",
+          "started_at": "2025-07-14T16:58:28.472966",
           "completed_at": null,
           "duration": null,
           "notes": [],
@@ -311,5 +311,5 @@
   "events_file": "workflow_events.json",
   "version": "3.0.0",
   "project_name": "subcon",
-  "last_saved": "2025-07-14T16:57:28.218846"
+  "last_saved": "2025-07-14T16:58:28.477952"
 }

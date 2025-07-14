@@ -558,6 +558,25 @@
         "title": "캐시에서 데이터 로드가 안 되는 문제 분석 및 수정",
         "note": "캐시 문제 해결 완료. 동적 컬럼 매핑 및 날짜 처리 오류 수정 완료."
       }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "b79483ad-3438-4ecc-8163-7951fff36fe0",
+      "timestamp": "2025-07-14T16:58:28.472966",
+      "data": {
+        "from": "todo",
+        "to": "in_progress",
+        "task_name": "국세청작성일 날짜 처리 오류 분석 및 수정",
+        "task_description": ""
+      }
+    },
+    {
+      "type": "task_started",
+      "entity_id": "b79483ad-3438-4ecc-8163-7951fff36fe0",
+      "timestamp": "2025-07-14T16:58:28.474953",
+      "data": {
+        "title": "국세청작성일 날짜 처리 오류 분석 및 수정"
+      }
     }
   ]
 }
