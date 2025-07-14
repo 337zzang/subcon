@@ -1,0 +1,153 @@
+{
+  "events": [
+    {
+      "type": "workflow_created",
+      "entity_id": "cc358d9b-7697-472e-92ce-8d86eec6730d",
+      "timestamp": "2025-07-14T09:44:03.572139",
+      "data": {
+        "name": "매입대사 시스템 UI 제품화",
+        "description": ""
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "cc358d9b-7697-472e-92ce-8d86eec6730d",
+      "timestamp": "2025-07-14T09:44:03.573138",
+      "data": {
+        "from": "draft",
+        "to": "active",
+        "workflow_id": "cc358d9b-7697-472e-92ce-8d86eec6730d"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "371dd546-75a0-4f21-b2c5-00f6e7307c16",
+      "timestamp": "2025-07-14T09:44:13.383862",
+      "data": {
+        "title": "노트북 파일 분석 및 요구사항 정리",
+        "workflow_id": "cc358d9b-7697-472e-92ce-8d86eec6730d"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "89bba2fc-060f-411a-a54f-1f207c7e2ef3",
+      "timestamp": "2025-07-14T09:44:13.385831",
+      "data": {
+        "title": "UI/UX 설계 및 레이아웃 개선",
+        "workflow_id": "cc358d9b-7697-472e-92ce-8d86eec6730d"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "f593c242-e5d1-4525-aea7-44278c8d6c3a",
+      "timestamp": "2025-07-14T09:44:13.387832",
+      "data": {
+        "title": "파일 업로드 모듈 개발",
+        "workflow_id": "cc358d9b-7697-472e-92ce-8d86eec6730d"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "dbf61c15-a979-439f-adf6-dad7af27620d",
+      "timestamp": "2025-07-14T09:44:13.394833",
+      "data": {
+        "title": "대사기간 선택 기능 구현",
+        "workflow_id": "cc358d9b-7697-472e-92ce-8d86eec6730d"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "9b71c74e-596d-425d-b20d-ec282c280030",
+      "timestamp": "2025-07-14T09:44:13.399834",
+      "data": {
+        "title": "데이터 처리 백엔드 API 개발",
+        "workflow_id": "cc358d9b-7697-472e-92ce-8d86eec6730d"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "929b4c4d-6152-4c3b-9a13-df7e0f7f985a",
+      "timestamp": "2025-07-14T09:44:13.403848",
+      "data": {
+        "title": "프론트엔드 UI 컴포넌트 개발",
+        "workflow_id": "cc358d9b-7697-472e-92ce-8d86eec6730d"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "09d15361-16a6-4dd8-b1d9-087eb1f85345",
+      "timestamp": "2025-07-14T09:44:13.407836",
+      "data": {
+        "title": "데이터 대사 로직 구현",
+        "workflow_id": "cc358d9b-7697-472e-92ce-8d86eec6730d"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "ffca108f-e2fa-42d3-9cb1-db23bef4f70f",
+      "timestamp": "2025-07-14T09:44:13.412833",
+      "data": {
+        "title": "결과 리포트 생성 기능",
+        "workflow_id": "cc358d9b-7697-472e-92ce-8d86eec6730d"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "0cff33c0-b6ee-4f21-930b-dc1f78a42323",
+      "timestamp": "2025-07-14T09:44:13.414832",
+      "data": {
+        "title": "테스트 및 디버깅",
+        "workflow_id": "cc358d9b-7697-472e-92ce-8d86eec6730d"
+      }
+    },
+    {
+      "type": "task_added",
+      "entity_id": "bfd9db6f-cef6-4b74-a93c-a21e56f6a121",
+      "timestamp": "2025-07-14T09:44:13.417834",
+      "data": {
+        "title": "배포 및 문서화",
+        "workflow_id": "cc358d9b-7697-472e-92ce-8d86eec6730d"
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "371dd546-75a0-4f21-b2c5-00f6e7307c16",
+      "timestamp": "2025-07-14T09:44:20.408173",
+      "data": {
+        "from": "todo",
+        "to": "in_progress",
+        "task_name": "노트북 파일 분석 및 요구사항 정리",
+        "task_description": ""
+      }
+    },
+    {
+      "type": "task_started",
+      "entity_id": "371dd546-75a0-4f21-b2c5-00f6e7307c16",
+      "timestamp": "2025-07-14T09:44:20.409173",
+      "data": {
+        "title": "노트북 파일 분석 및 요구사항 정리"
+      }
+    },
+    {
+      "type": "state_changed",
+      "entity_id": "371dd546-75a0-4f21-b2c5-00f6e7307c16",
+      "timestamp": "2025-07-14T09:57:02.599820",
+      "data": {
+        "from": "in_progress",
+        "to": "completed",
+        "task_name": "노트북 파일 분석 및 요구사항 정리",
+        "note": "노트북 코드 분석 및 PyQt6 UI 재설계 완료",
+        "duration": "12분"
+      }
+    },
+    {
+      "type": "task_completed",
+      "entity_id": "371dd546-75a0-4f21-b2c5-00f6e7307c16",
+      "timestamp": "2025-07-14T09:57:02.601819",
+      "data": {
+        "title": "노트북 파일 분석 및 요구사항 정리",
+        "note": "노트북 코드 분석 및 PyQt6 UI 재설계 완료"
+      }
+    }
+  ]
+}

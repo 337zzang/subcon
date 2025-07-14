@@ -1,7 +1,7 @@
 # 프로젝트 컨텍스트: subcon
 
 > 이 문서는 프로젝트의 상세 컨텍스트와 구조를 설명합니다.
-> 최종 업데이트: 2025-07-14 09:20:52
+> 최종 업데이트: 2025-07-14 10:03:56
 
 ## 🎯 프로젝트 개요
 
@@ -23,10 +23,8 @@
 | `data/` | 프로젝트 관련 파일 |
 | `docs/` | 문서 |
 | `memory/` | 캐시 및 상태 저장 |
-| `OUT/` | 프로젝트 관련 파일 |
 | `sample_data/` | 프로젝트 관련 파일 |
 | `src/` | 소스 코드 |
-| `test/` | 테스트 코드 |
 
 ## 📦 의존성
 
@@ -45,67 +43,65 @@ subcon/
 │   ├── app_config.json
 ├── data/
 ├── docs/
-│   ├── api_design.md
-│   ├── implementation_plan.md
-│   ├── overview.md
-│   └── ... (2 more files)
+│   ├── design/
+│   │   ├── purchase_reconciliation_ui_task01_notebook_analysis_design_20250714.md
+│   ├── error/
+│   └── report/
+│       ├── purchase_reconciliation_ui_task01_notebook_analysis_complete_20250714.md
 ├── memory/
 │   └── workflow_v3/
 │       └── backups/
 │           └── subcon/
 │       ├── subcon_workflow.json
 │   ├── context.json
-├── OUT/
+│   ├── workflow.json
+│   ├── workflow_events.json
 ├── sample_data/
-├── src/
-│   ├── models/
-│   │   ├── __init__.py
-│   │   ├── base_model.py
-│   │   ├── payment.py
-│   │   └── ... (4 more files)
-│   ├── resources/
-│   │   └── icons/
-│   ├── services/
-│   │   ├── __init__.py
-│   │   ├── data_manager.py
-│   │   ├── excel_service.py
-│   │   └── ... (1 more files)
-│   ├── ui/
-│   │   ├── dialogs/
-│   │   │   ├── __init__.py
-│   │   └── widgets/
-│   │       ├── __init__.py
-│   │       ├── analysis_widget.py
-│   │   ├── __init__.py
-│   │   ├── main_window.py
-│   │   ├── main_window_v2.py
-│   │   └── ... (1 more files)
-│   └── utils/
-│       ├── __init__.py
-│   ├── __init__.py
-│   ├── main.py
-└── test/
+└── src/
+    ├── models/
+    │   ├── __init__.py
+    │   ├── base_model.py
+    │   ├── payment.py
+    │   └── ... (5 more files)
+    ├── resources/
+    │   └── icons/
+    ├── services/
+    │   ├── __init__.py
+    │   ├── data_manager.py
+    │   ├── excel_service.py
+    │   └── ... (2 more files)
+    ├── ui/
+    │   ├── dialogs/
+    │   │   ├── __init__.py
+    │   └── widgets/
+    │       ├── __init__.py
+    │       ├── analysis_widget.py
+    │   ├── __init__.py
+    │   ├── main_window.py
+    │   ├── main_window_v2.py
+    │   └── ... (2 more files)
+    └── utils/
+        ├── __init__.py
     ├── __init__.py
-    ├── test_models.py
-    ├── test_smoke.py
+    ├── main.py
 ├── file_directory.md
 ├── kfunction.py
 ├── PROJECT_CONTEXT.md
-└── ... (4 more files)
+└── ... (2 more files)
 ```
 - `.gitignore`: Git 무시 파일
 - `requirements.txt`: Python 의존성
 
 ## 📊 프로젝트 통계
 
-- **전체 파일 수**: 65개
-- **디렉토리 수**: 19개
+- **전체 파일 수**: 54개
+- **디렉토리 수**: 20개
 - **파일 타입 분포**:
-  - `.py`: 27개 (41.5%)
-  - `.bat`: 10개 (15.4%)
-  - `.xlsx`: 10개 (15.4%)
-  - `.md`: 9개 (13.8%)
-  - `.json`: 6개 (9.2%)
+  - `.py`: 26개 (48.1%)
+  - `.xlsx`: 10개 (18.5%)
+  - `.json`: 8개 (14.8%)
+  - `.md`: 5개 (9.3%)
+  - `.bat`: 2개 (3.7%)
 
 ## 🚀 빠른 시작
 

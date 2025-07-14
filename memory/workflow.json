@@ -1,0 +1,156 @@
+{
+  "plans": [
+    {
+      "id": "cc358d9b-7697-472e-92ce-8d86eec6730d",
+      "name": "매입대사 시스템 UI 제품화",
+      "description": "",
+      "status": "draft",
+      "tasks": [
+        {
+          "id": "371dd546-75a0-4f21-b2c5-00f6e7307c16",
+          "title": "노트북 파일 분석 및 요구사항 정리",
+          "description": "",
+          "status": "completed",
+          "created_at": "2025-07-14T09:44:13.383862+09:00",
+          "updated_at": "2025-07-14T09:57:02.599820",
+          "started_at": "2025-07-14T09:44:20.408173",
+          "completed_at": "2025-07-14T09:57:02.599820",
+          "duration": null,
+          "notes": [
+            "[완료] 노트북 코드 분석 및 PyQt6 UI 재설계 완료"
+          ],
+          "outputs": {}
+        },
+        {
+          "id": "89bba2fc-060f-411a-a54f-1f207c7e2ef3",
+          "title": "UI/UX 설계 및 레이아웃 개선",
+          "description": "",
+          "status": "todo",
+          "created_at": "2025-07-14T09:44:13.385831+09:00",
+          "updated_at": "2025-07-14T09:44:13.385831+09:00",
+          "started_at": null,
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        },
+        {
+          "id": "f593c242-e5d1-4525-aea7-44278c8d6c3a",
+          "title": "파일 업로드 모듈 개발",
+          "description": "",
+          "status": "todo",
+          "created_at": "2025-07-14T09:44:13.387832+09:00",
+          "updated_at": "2025-07-14T09:44:13.387832+09:00",
+          "started_at": null,
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        },
+        {
+          "id": "dbf61c15-a979-439f-adf6-dad7af27620d",
+          "title": "대사기간 선택 기능 구현",
+          "description": "",
+          "status": "todo",
+          "created_at": "2025-07-14T09:44:13.394833+09:00",
+          "updated_at": "2025-07-14T09:44:13.394833+09:00",
+          "started_at": null,
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        },
+        {
+          "id": "9b71c74e-596d-425d-b20d-ec282c280030",
+          "title": "데이터 처리 백엔드 API 개발",
+          "description": "",
+          "status": "todo",
+          "created_at": "2025-07-14T09:44:13.399834+09:00",
+          "updated_at": "2025-07-14T09:44:13.399834+09:00",
+          "started_at": null,
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        },
+        {
+          "id": "929b4c4d-6152-4c3b-9a13-df7e0f7f985a",
+          "title": "프론트엔드 UI 컴포넌트 개발",
+          "description": "",
+          "status": "todo",
+          "created_at": "2025-07-14T09:44:13.403848+09:00",
+          "updated_at": "2025-07-14T09:44:13.403848+09:00",
+          "started_at": null,
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        },
+        {
+          "id": "09d15361-16a6-4dd8-b1d9-087eb1f85345",
+          "title": "데이터 대사 로직 구현",
+          "description": "",
+          "status": "todo",
+          "created_at": "2025-07-14T09:44:13.407836+09:00",
+          "updated_at": "2025-07-14T09:44:13.407836+09:00",
+          "started_at": null,
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        },
+        {
+          "id": "ffca108f-e2fa-42d3-9cb1-db23bef4f70f",
+          "title": "결과 리포트 생성 기능",
+          "description": "",
+          "status": "todo",
+          "created_at": "2025-07-14T09:44:13.412833+09:00",
+          "updated_at": "2025-07-14T09:44:13.412833+09:00",
+          "started_at": null,
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        },
+        {
+          "id": "0cff33c0-b6ee-4f21-930b-dc1f78a42323",
+          "title": "테스트 및 디버깅",
+          "description": "",
+          "status": "todo",
+          "created_at": "2025-07-14T09:44:13.414832+09:00",
+          "updated_at": "2025-07-14T09:44:13.414832+09:00",
+          "started_at": null,
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        },
+        {
+          "id": "bfd9db6f-cef6-4b74-a93c-a21e56f6a121",
+          "title": "배포 및 문서화",
+          "description": "",
+          "status": "todo",
+          "created_at": "2025-07-14T09:44:13.417834+09:00",
+          "updated_at": "2025-07-14T09:44:13.417834+09:00",
+          "started_at": null,
+          "completed_at": null,
+          "duration": null,
+          "notes": [],
+          "outputs": {}
+        }
+      ],
+      "current_task_index": 0,
+      "created_at": "2025-07-14T09:44:03.572139+09:00",
+      "updated_at": "2025-07-14T09:44:03.572139+09:00",
+      "completed_at": null,
+      "archived_at": null,
+      "stats": {},
+      "metadata": {}
+    }
+  ],
+  "active_plan_id": "cc358d9b-7697-472e-92ce-8d86eec6730d",
+  "events_file": "workflow_events.json",
+  "version": "3.0.0",
+  "project_name": "subcon",
+  "last_saved": "2025-07-14T09:57:02.604823"
+}
